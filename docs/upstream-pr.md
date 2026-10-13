@@ -5,17 +5,17 @@
 - Fork: https://github.com/ju-sir/lolPing
 - 分支: `feat/configurable-ai-assistance`
 - 提交: `00a7095d9df71d02a5e8c1f7be0e3d281b9fa11f`
-- 创建 PR: https://github.com/darrenprx/lolPing/compare/main...ju-sir:lolPing:feat/configurable-ai-assistance?expand=1
+- Draft PR: https://github.com/darrenprx/lolPing/pull/67
 
 保留上游品牌、许可证、工作流和打包目标，默认所有 AI 动作关闭。上游分支类型检查、构建及 725 项测试通过，1 项跳过。
 
-2026-10-13 尝试创建 Draft PR 时，GitHub API 返回 `Resource not accessible by personal access token`；应用内浏览器尚未登录 GitHub。因此分支已上传，但 PR 尚未创建。
+2026-10-13 已通过登录后的 GitHub 页面创建 Draft PR #67。GitHub 显示与上游 `main` 无合并冲突；1 个工作流等待上游维护者批准运行。PR 正文包含功能说明、测试结果及平台和本地化验证范围，等待维护者反馈。
 
-## 建议标题
+## PR 标题
 
 Add opt-in AI screenshot assistance with configurable signal prompts
 
-## 建议正文
+## 提案摘要
 
 When users ping content they do not understand, this adds optional screenshot assistance with per-signal prompts and actions. All AI actions are disabled by default. Configure a vision-chat endpoint, model and API key, then show, copy, or show-and-copy an answer.
 
