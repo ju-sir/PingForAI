@@ -71,16 +71,16 @@ describe('RelayTransport', () => {
   it("emits packet(net:<pubkey>, bytes) for other members' events", () => {
     relay.start(KEYS);
     last().open();
-    last().receive(['EVENT', 'lolping', theirs('AQID')]);
+    last().receive(['EVENT', 'pingforai', theirs('AQID')]);
     expect(packets).toEqual([[`net:${other.pubkey}`, Buffer.from([1, 2, 3])]]);
   });
 
   it("drops content over 1600 characters or that isn't base64", () => {
     relay.start(KEYS);
     last().open();
-    last().receive(['EVENT', 'lolping', theirs('A'.repeat(1604))]);
-    last().receive(['EVENT', 'lolping', theirs('!!!!')]);
-    last().receive(['EVENT', 'lolping', theirs('AQI')]);
+    last().receive(['EVENT', 'pingforai', theirs('A'.repeat(1604))]);
+    last().receive(['EVENT', 'pingforai', theirs('!!!!')]);
+    last().receive(['EVENT', 'pingforai', theirs('AQI')]);
     expect(packets).toEqual([]);
   });
 
@@ -131,7 +131,7 @@ describe('RelayTransport', () => {
     const old = last();
     relay.stop(); // still draining the bye
     relay.start(KEYS);
-    old.receive(['EVENT', 'lolping', theirs('AQID')]);
+    old.receive(['EVENT', 'pingforai', theirs('AQID')]);
     expect(packets).toEqual([]);
   });
 
@@ -144,7 +144,7 @@ describe('RelayTransport', () => {
     last().open();
     relay.broadcast(Uint8Array.from([1]));
     const mine = published(last())[0];
-    last().receive(['EVENT', 'lolping', mine]);
+    last().receive(['EVENT', 'pingforai', mine]);
     relay.stop();
     expect(statuses).toEqual(['starting', 'ok', 'off']);
     expect(linkUp).toHaveBeenCalledTimes(1);

@@ -5,6 +5,6 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const out = join(tmpdir(), 'lolping-relay-probe.mjs');
+const out = join(tmpdir(), 'pingforai-relay-probe.mjs');
 await build({ entryPoints: [join(here, 'probe.ts')], bundle: true, platform: 'node', format: 'esm', outfile: out, logLevel: 'warning' });
 await import(pathToFileURL(out).href);

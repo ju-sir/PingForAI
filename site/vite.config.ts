@@ -16,7 +16,7 @@ export default defineConfig({
   plugins: [
     pruneAssets(),
     {
-      name: 'lolping-og-image',
+      name: 'pingforai-og-image',
       generateBundle() {
         // Link-preview image (Discord, X...). `npm run media` makes it, so the very first build may not have it.
         const og = resolve('docs/media/og.png');

@@ -9,7 +9,7 @@ const KEYS: RoomKeys = { msgKey: Buffer.alloc(32, 1), relayTopic: 'room' };
 const CODE = makeRoomCode(Uint8Array.from([1, 2, 3, 4, 5, 6, 7, 8, 9]));
 const SELF = 'abababababababab';
 
-/** Another lolPing in the room, sending through the fake transport. */
+/** Another PingForAI in the room, sending through the fake transport. */
 class Remote {
   seq = 0;
   constructor(readonly peer: string, readonly key: string, readonly lan: FakeTransport) {}

@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 // The release workflow cannot run here, so these checks keep its ordering from regressing: installed apps read latest.yml from the
 // newest *published* release, so the release has to stay a draft until both installers and the update files are uploaded.
-const workflow = readFileSync(join(__dirname, '../../.github/workflows/release.yml'), 'utf8').replace(/\r\n/g, '\n');
+const workflow = readFileSync(join(__dirname, '../../tools/github-workflows/release.yml'), 'utf8').replace(/\r\n/g, '\n');
 
 /** The text of one top-level job. */
 function job(name: string): string {
@@ -24,11 +24,11 @@ describe('release workflow', () => {
 
   it('uploads the installer, latest.yml and the blockmap from the Windows job, and the disk image from the Mac job', () => {
     const win = job('windows');
-    expect(win).toContain('"release/lolPing-Setup-${GITHUB_REF_NAME#v}.exe"');
+    expect(win).toContain('"release/PingForAI-Setup-${GITHUB_REF_NAME#v}.exe"');
     expect(win).toContain('"release/latest.yml"');
-    expect(win).toContain('"release/lolPing-Setup-${GITHUB_REF_NAME#v}.exe.blockmap"');
+    expect(win).toContain('"release/PingForAI-Setup-${GITHUB_REF_NAME#v}.exe.blockmap"');
     expect(win).toContain('--clobber');
-    expect(job('mac')).toContain('release/lolPing-${GITHUB_REF_NAME#v}-arm64.dmg');
+    expect(job('mac')).toContain('release/PingForAI-${GITHUB_REF_NAME#v}-arm64.dmg');
   });
 
   it('publishes the draft in a last job that waits for both platform jobs', () => {

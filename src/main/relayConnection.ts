@@ -26,7 +26,7 @@ export interface RelayConnectionOptions {
   random?: () => number;
 }
 
-const SUB_ID = 'lolping';
+const SUB_ID = 'pingforai';
 /** The replay guard's window: a relay that wrongly stored older events can't send them back. */
 const SINCE_S = 600;
 const CONNECT_MS = 10_000;

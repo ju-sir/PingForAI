@@ -15,7 +15,7 @@ export type HelperEvent =
   | { type: 'error'; message: string; code?: string }
   | { type: 'sim'; swallow: boolean; inject: string };
 
-/** `noAccess`: macOS hasn't given lolPing Accessibility access, so the helper can't run. */
+/** `noAccess`: macOS hasn't given PingForAI Accessibility access, so the helper can't run. */
 export type HelperStatus = 'starting' | 'running' | 'failed' | 'noAccess';
 
 /** The helper's exit code when it can't create its event tap (macOS Accessibility access missing). */

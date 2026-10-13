@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>lolPing Room Demo</title>
+<title>PingForAI Room Demo</title>
 <style>
   :root {
     --bg: #202020; --card: rgba(255,255,255,.05); --stroke: rgba(255,255,255,.07); --text: #fff; --text3: rgba(255,255,255,.55);
@@ -83,7 +83,7 @@
 
   <div id="out">
     <div class="card">
-      <div class="lbl">Join a room<span class="desc">Paste the code a friend sent you, or create a room and share yours. Windows may ask to allow lolPing on your network: allow it, and make sure your Wi‑Fi is set to Private.</span></div>
+      <div class="lbl">Join a room<span class="desc">Paste the code a friend sent you, or create a room and share yours. Windows may ask to allow PingForAI on your network: allow it, and make sure your Wi‑Fi is set to Private.</span></div>
       <div class="ctl"><input placeholder="PING-XXXXX-XXXXX" value="PING-7KQ4M-2HXTR"><button class="primary">Join</button><button>Create room</button></div>
       <div class="err" style="flex-basis:100%">This code looks mistyped.</div>
     </div>
@@ -95,7 +95,7 @@
       <div class="ctl"><button>Copy code</button><button>Leave room</button></div>
     </div>
     <div class="card warn" id="lanbad" hidden>
-      <div class="lbl">LAN unavailable<span class="desc">lolPing couldn’t open UDP port 47474. Another app may be using it; restarting lolPing can help.</span></div>
+      <div class="lbl">LAN unavailable<span class="desc">PingForAI couldn’t open UDP port 47474. Another app may be using it; restarting PingForAI can help.</span></div>
     </div>
     <div class="card warn new" id="netbad" hidden>
       <div class="lbl">Internet unavailable<span class="desc">Can’t reach any relay. Retrying in the background.</span></div>
@@ -115,7 +115,7 @@
 <script>
   const COLORS = ['#4fc3f7', '#ff8a65', '#aed581', '#ba68c8', '#ffd54f', '#4db6ac', '#f06292', '#e0e0e0'];
   const PRIVACY = 'Pings and names are end-to-end encrypted. People on your network can see your local IP address. With internet connections on, public relays see your IP address, an anonymous room ID and when you send, but never your pings or your name.';
-  const HELP = 'Can’t see a friend? Check that you both typed the same code. On the same network, lolPing must be allowed through the firewall; on different networks, you both need Allow internet connections on.';
+  const HELP = 'Can’t see a friend? Check that you both typed the same code. On the same network, PingForAI must be allowed through the firewall; on different networks, you both need Allow internet connections on.';
   document.getElementById('privacy').textContent = `${PRIVACY} ${HELP}`;
   document.getElementById('sw').innerHTML = COLORS.map((c, i) => `<span class="sw${i === 3 ? ' sel' : ''}" style="background:${c}"></span>`).join('');
 

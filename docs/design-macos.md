@@ -1,11 +1,11 @@
-# lolPing for macOS — Design Spec
+# PingForAI for macOS — Design Spec
 
 **Date:** 2026-10-02
 **Status:** Implemented in v0.2.0 (experimental). v0.2.1 fixes a frozen cursor during gestures, found in the first test on a real Mac
 
 ## 1. Purpose and constraints
 
-Bring lolPing to macOS with the same behaviour as on Windows: hold a key, drag, release on a slice, and the ping appears on any display and in whole-screen capture.
+Bring PingForAI to macOS with the same behaviour as on Windows: hold a key, drag, release on a slice, and the ping appears on any display and in whole-screen capture.
 
 | Topic | Decision |
 |---|---|
@@ -66,8 +66,8 @@ Creating an active tap needs Accessibility. If `CGEventTapCreate` returns `NULL`
 - **Accessibility flow:**
   - `HelperStatus` gains `'noAccess'`.
   - Before starting the helper, main calls `systemPreferences.isTrustedAccessibilityClient(false)`. If false: status `noAccess`, helper not started, poll every 1.5 s, start the helper once trusted.
-  - The settings card's button calls `isTrustedAccessibilityClient(true)` (adds lolPing to the list and shows the system prompt) and opens `x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility`.
-  - `InputBridge` treats exit code 3 as `noAccess`: no restart, no crash count. If macOS says lolPing is trusted but the tap still fails (a stale entry after an ad-hoc update), the card tells the user to remove lolPing from the list with "–" and turn it on again, with a Try again button.
+  - The settings card's button calls `isTrustedAccessibilityClient(true)` (adds PingForAI to the list and shows the system prompt) and opens `x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility`.
+  - `InputBridge` treats exit code 3 as `noAccess`: no restart, no crash count. If macOS says PingForAI is trusted but the tap still fails (a stale entry after an ad-hoc update), the card tells the user to remove PingForAI from the list with "–" and turn it on again, with a Try again button.
 
 ## 4. Settings UI
 
@@ -81,7 +81,7 @@ Creating an active tap needs Accessibility. If `CGEventTapCreate` returns `NULL`
 ## 5. Packaging, CI, release
 
 - `npm run build:helper` / `test:helper` call `native/hook-helper/run.mjs`, which runs `build.cmd` or `build.sh`.
-- `npm run dist` builds the Windows installer, `npm run dist:mac` the Mac `.dmg` (`lolPing-<version>-arm64.dmg`), ad-hoc signed with `identity: "-"` and `hardenedRuntime: false`, `LSUIElement` not set (the Dock is managed at runtime).
+- `npm run dist` builds the Windows installer, `npm run dist:mac` the Mac `.dmg` (`PingForAI-<version>-arm64.dmg`), ad-hoc signed with `identity: "-"` and `hardenedRuntime: false`, `LSUIElement` not set (the Dock is managed at runtime).
 - `tools/make_icon.py` also writes `build/icon.png` (1024 px) and the tray templates.
 - CI: a `macos-latest` job runs typecheck, helper tests, TypeScript tests and `dist:mac`, then `codesign --verify --deep --strict` on the app.
 - Release: one job creates the GitHub release, then the Windows and Mac jobs upload their installers.

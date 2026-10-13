@@ -11,7 +11,7 @@ import type { UpdateState } from '../shared/update';
 import { emoteFileFrom, type EmoteLibrary } from './emoteLibrary';
 import type { SettingsStore } from './settingsStore';
 
-const PROJECT_URL = 'https://github.com/darrenprx/lolPing';
+const PROJECT_URL = 'https://github.com/ju-sir/PingForAI';
 /** Where "What's new" goes when no update is known. */
 export const LATEST_RELEASE_URL = `${PROJECT_URL}/releases/latest`;
 
@@ -30,7 +30,7 @@ export interface SettingsIpcDeps {
   /** Strings in the app's current language. */
   text(): Strings;
   platform: Platform;
-  /** The update checker. Absent in a development build without LOLPING_UPDATE_TEST_URL: the page then shows no update controls. */
+  /** The update checker. Absent in a development build without PINGFORAI_UPDATE_TEST_URL: the page then shows no update controls. */
   update?: {
     state(): UpdateState;
     /** The release notes link of the update that was found, kept through a failed download or install; null when none is known. */

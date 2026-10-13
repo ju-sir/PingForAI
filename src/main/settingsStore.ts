@@ -28,9 +28,9 @@ export async function renameWithRetry(from: string, to: string): Promise<void> {
 export class SettingsStore extends EventEmitter {
   readonly file: string;
   readonly problems: string[] = [];
-  /** True when load() found no settings file: lolPing's first run. */
+  /** True when load() found no settings file: PingForAI's first run. */
   firstRun = false;
-  /** True when load() read an emote key that clashed with another lolPing key and turned it off. */
+  /** True when load() read an emote key that clashed with another PingForAI key and turned it off. */
   emoteKeyClashed = false;
   private current: Settings;
   private timer: NodeJS.Timeout | null = null;

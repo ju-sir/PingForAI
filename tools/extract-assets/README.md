@@ -57,10 +57,10 @@ The English emote list (`summoner-emotes.json`) is read from the client's `defau
 
 ```bash
 py -3.14 tools/extract-assets/extract_assets.py --league "C:/Riot Games/League of Legends" --emote-gallery --vgmstream tools/extract-assets/.cache/vgmstream/vgmstream-cli.exe
-py -3.14 -m http.server 8766 --directory "%TEMP%/lolping-emote-gallery"
+py -3.14 -m http.server 8766 --directory "%TEMP%/pingforai-emote-gallery"
 ```
 
-This writes `gallery.html` into `%TEMP%/lolping-emote-gallery/` (about 10 minutes). Serve that folder and open `http://localhost:8766/gallery.html`.
+This writes `gallery.html` into `%TEMP%/pingforai-emote-gallery/` (about 10 minutes). Serve that folder and open `http://localhost:8766/gallery.html`.
 
 - The page lists every emote that has an effect, about 2,400 of them.
 - The `EMOTE_SET` emotes come first, already ticked, along with the default wheel and centre.

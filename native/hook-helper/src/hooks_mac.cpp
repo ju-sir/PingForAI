@@ -200,7 +200,7 @@ int runHooks(Output& out) {
       CGEventMaskBit(kCGEventRightMouseDragged) | CGEventMaskBit(kCGEventOtherMouseDragged);
   g_tap = CGEventTapCreate(kCGSessionEventTap, kCGHeadInsertEventTap, kCGEventTapOptionDefault, mask, tapCallback, nullptr);
   if (g_tap == nullptr) {
-    out.error("noAccess", "Can't read input: lolPing needs Accessibility permission");
+    out.error("noAccess", "Can't read input: PingForAI needs Accessibility permission");
     return kExitNoAccess;
   }
   CFRunLoopRef loop = CFRunLoopGetCurrent();

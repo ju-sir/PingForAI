@@ -46,11 +46,11 @@ describe('language', () => {
 
   it('words the update checker as specified, with a menu bar toast on a Mac', () => {
     const en = strings('en');
-    expect(en.updateAvailable('0.5.1')).toBe('lolPing 0.5.1 is available');
+    expect(en.updateAvailable('0.5.1')).toBe('PingForAI 0.5.1 is available');
     expect(en.updateToastTitle).toBe('Update available');
-    expect(en.updateToastBody('0.5.1')).toBe('lolPing 0.5.1 is ready to download. Update from the tray menu or Settings.');
-    expect(en.updateMacSteps).toBe('lolPing downloads the update and opens it. Drag lolPing into Applications, choose Replace, then open it and allow Accessibility again.');
-    expect(en.updateMacDialog).toBe('Drag lolPing into Applications and choose Replace. Then open it and allow Accessibility again. lolPing will quit now.');
+    expect(en.updateToastBody('0.5.1')).toBe('PingForAI 0.5.1 is ready to download. Update from the tray menu or Settings.');
+    expect(en.updateMacSteps).toBe('PingForAI downloads the update and opens it. Drag PingForAI into Applications, choose Replace, then open it and allow Accessibility again.');
+    expect(en.updateMacDialog).toBe('Drag PingForAI into Applications and choose Replace. Then open it and allow Accessibility again. PingForAI will quit now.');
     expect(en.updateErrDamaged).toBe('The download was damaged. Try again.');
     expect(en.autoUpdateCheckDesc).toBe('Checks GitHub for a new version every few hours. Nothing downloads until you click Update.');
     expect(en.restartingToUpdate).toBe('Restarting to update…');

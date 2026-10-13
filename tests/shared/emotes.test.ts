@@ -46,8 +46,8 @@ describe('emote refs', () => {
     expect(emoteIconUrl('facepalm')).toBe('../emotes/facepalm.png');
     expect(emoteSoundUrl('facepalm')).toBe('../emotes/facepalm.ogg');
     expect(customHash(`c:${HASH}`)).toBe(HASH);
-    expect(customStillUrl(HASH)).toBe(`lolping://emotes/${HASH}.webp`);
-    expect(customAnimUrl(HASH)).toBe(`lolping://emotes/${HASH}.anim`);
+    expect(customStillUrl(HASH)).toBe(`pingforai://emotes/${HASH}.webp`);
+    expect(customAnimUrl(HASH)).toBe(`pingforai://emotes/${HASH}.anim`);
   });
 });
 

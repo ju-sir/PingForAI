@@ -39,7 +39,7 @@ const call = (channel: string, ...args: unknown[]): Promise<unknown> => Promise.
 beforeEach(() => {
   h.handlers.clear();
   h.opened.length = 0;
-  const dir = mkdtempSync(join(tmpdir(), 'lolping-ipc-'));
+  const dir = mkdtempSync(join(tmpdir(), 'pingforai-ipc-'));
   store = new SettingsStore(dir, 60_000);
   store.load();
   library = new EmoteLibrary(join(dir, 'emotes'));
@@ -113,9 +113,9 @@ describe('settings IPC', () => {
 });
 
 describe('update IPC', () => {
-  const AVAILABLE: UpdateState = { phase: 'available', version: '0.5.1', notesUrl: 'https://github.com/darrenprx/lolPing/releases/tag/v0.5.1' };
+  const AVAILABLE: UpdateState = { phase: 'available', version: '0.5.1', notesUrl: 'https://github.com/ju-sir/PingForAI/releases/tag/v0.5.1' };
 
-  const NOTES = 'https://github.com/darrenprx/lolPing/releases/tag/v0.5.1';
+  const NOTES = 'https://github.com/ju-sir/PingForAI/releases/tag/v0.5.1';
 
   /** `notesUrl`: the release notes of the update the checker knows about, if it knows one. */
   function fakeUpdate(state: UpdateState, notesUrl: string | null = null) {
@@ -194,13 +194,13 @@ describe('update IPC', () => {
       h.opened.length = 0;
       registerWith(fakeUpdate(state, null));
       await call(SETTINGS_CH.updateOpenRelease);
-      expect(h.opened, state.phase).toEqual(['https://github.com/darrenprx/lolPing/releases/latest']);
+      expect(h.opened, state.phase).toEqual(['https://github.com/ju-sir/PingForAI/releases/latest']);
     }
   });
 
   it('openReleasePage never opens a link that is not a web page', async () => {
     registerWith(fakeUpdate(AVAILABLE, 'file:///C:/Windows/System32/calc.exe'));
     await call(SETTINGS_CH.updateOpenRelease);
-    expect(h.opened).toEqual(['https://github.com/darrenprx/lolPing/releases/latest']);
+    expect(h.opened).toEqual(['https://github.com/ju-sir/PingForAI/releases/latest']);
   });
 });

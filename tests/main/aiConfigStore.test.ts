@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { mkdtempSync, readFileSync, rmSync, statSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 vi.mock('electron', () => ({ safeStorage: {} }));
@@ -19,6 +19,14 @@ const make = (secure = crypto) => {
 afterEach(() => dirs.splice(0).forEach((dir) => rmSync(dir, { recursive: true, force: true })));
 
 describe('AI connection configuration', () => {
+  it('keeps the app usable and disables AI when the saved file is damaged', () => {
+    const { dir } = make();
+    writeFileSync(join(dir, 'ai-config.json'), '{broken');
+    const store = new AiConfigStore(dir, crypto, { AI_API_KEY: 'environment-key' });
+    expect(store.publicConfig().hasApiKey).toBe(false);
+    store.save({ endpoint: 'https://example.com/chat', model: 'test', apiKey: 'replacement-key' });
+    expect(store.runtime().apiKey).toBe('replacement-key');
+  });
   it('encrypts credentials, returns only status, and restores configuration after restart', () => {
     const { dir, store } = make();
     const state = store.save({ endpoint: 'https://api.deepseek.com/chat/completions', model: 'deepseek-flash', apiKey: 'private-test-key' });

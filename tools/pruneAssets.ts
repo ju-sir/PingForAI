@@ -12,7 +12,7 @@ import { allSoundNames, allTextureNames } from '../src/shared/pings';
 export function pruneAssets(): Plugin {
   let outDir = '';
   return {
-    name: 'lolping-prune-assets',
+    name: 'pingforai-prune-assets',
     apply: 'build',
     configResolved(config) {
       outDir = resolve(config.root, config.build.outDir);

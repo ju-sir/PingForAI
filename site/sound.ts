@@ -1,7 +1,7 @@
 import { DEFAULT_SETTINGS, overlaySettings } from '../src/shared/settings';
 import { emit } from './overlayShim';
 
-const KEY = 'lolping-site-sound';
+const KEY = 'pingforai-site-sound';
 let soundOn = true;
 let hushed = false;
 

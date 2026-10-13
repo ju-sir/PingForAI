@@ -43,7 +43,7 @@ async function open(url, width, height) {
 
 async function recordGif(url, file) {
   const win = await open(url, 1600, 900);
-  const dir = mkdtempSync(join(tmpdir(), 'lolping-frames-'));
+  const dir = mkdtempSync(join(tmpdir(), 'pingforai-frames-'));
   const frames = [];
   win.webContents.on('paint', (_e, _dirty, image) => {
     const name = `f${String(frames.length).padStart(5, '0')}.png`;
@@ -51,7 +51,7 @@ async function recordGif(url, file) {
     frames.push({ name, t: performance.now() });
   });
   win.webContents.invalidate();
-  await win.webContents.executeJavaScript('window.lolpingDemo.play()');
+  await win.webContents.executeJavaScript('window.pingforaiDemo.play()');
   const end = performance.now();
   win.destroy();
 
@@ -68,7 +68,7 @@ async function recordGif(url, file) {
 
 async function stillOg(url) {
   const win = await open(url, 1200, 630);
-  await win.webContents.executeJavaScript('window.lolpingDemo.pose(), new Promise((r) => setTimeout(r, 900))');
+  await win.webContents.executeJavaScript('window.pingforaiDemo.pose(), new Promise((r) => setTimeout(r, 900))');
   const image = await win.webContents.capturePage();
   writeFileSync(join(OUT, 'og.png'), image.resize({ width: 1200, height: 630, quality: 'best' }).toPNG());
   win.destroy();

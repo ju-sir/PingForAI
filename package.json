@@ -1,14 +1,15 @@
 {
-  "name": "lolping",
-  "productName": "lolPing",
+  "name": "pingforai",
+  "productName": "PingForAI",
   "version": "0.5.1",
   "private": true,
   "description": "League of Legends style ping wheel for your Windows and macOS desktop",
-  "author": "Danrui Meng (https://github.com/darrenprx)",
+  "author": "ju-sir (https://github.com/ju-sir)",
+  "contributors": ["Danrui Meng (https://github.com/darrenprx)"],
   "license": "MIT",
-  "homepage": "https://github.com/darrenprx/lolPing#readme",
-  "repository": { "type": "git", "url": "https://github.com/darrenprx/lolPing.git" },
-  "bugs": "https://github.com/darrenprx/lolPing/issues",
+  "homepage": "https://github.com/ju-sir/PingForAI#readme",
+  "repository": { "type": "git", "url": "https://github.com/ju-sir/PingForAI.git" },
+  "bugs": "https://github.com/ju-sir/PingForAI/issues",
   "main": "out/main/index.js",
   "scripts": {
     "dev": "node --env-file-if-exists=.env node_modules/electron-vite/bin/electron-vite.js dev",
@@ -46,10 +47,10 @@
     "ws": "8.22.0"
   },
   "build": {
-    "appId": "com.lolping.app",
-    "productName": "lolPing",
+    "appId": "com.pingforai.app",
+    "productName": "PingForAI",
     "directories": { "output": "release", "buildResources": "build" },
-    "files": ["out/**/*", "package.json"],
+    "files": ["out/**/*", "package.json", "LICENSE", "NOTICE.md"],
     "win": {
       "target": [{ "target": "nsis", "arch": ["x64"] }],
       "icon": "build/icon.ico",
@@ -59,7 +60,7 @@
       "oneClick": false,
       "perMachine": false,
       "allowToChangeInstallationDirectory": true,
-      "artifactName": "lolPing-Setup-${version}.exe",
+      "artifactName": "PingForAI-Setup-${version}.exe",
       "include": "build/installer.nsh"
     },
     "mac": {
@@ -73,12 +74,12 @@
         { "from": "build", "to": ".", "filter": ["tray*Template*.png"] }
       ],
       "extendInfo": {
-        "NSAccessibilityUsageDescription": "lolPing reads the mouse and keyboard to open the ping wheel or the emote wheel when you hold its key and drag.",
-        "NSDownloadsFolderUsageDescription": "lolPing saves update downloads to your Downloads folder.",
-        "NSLocalNetworkUsageDescription": "lolPing finds the other people in your room on the local network and sends them your pings."
+        "NSAccessibilityUsageDescription": "PingForAI reads the mouse and keyboard to open the ping wheel or the emote wheel when you hold its key and drag.",
+        "NSDownloadsFolderUsageDescription": "PingForAI saves update downloads to your Downloads folder.",
+        "NSLocalNetworkUsageDescription": "PingForAI finds the other people in your room on the local network and sends them your pings."
       }
     },
-    "dmg": { "artifactName": "lolPing-${version}-arm64.dmg" },
-    "publish": [{ "provider": "github", "owner": "darrenprx", "repo": "lolPing" }]
+    "dmg": { "artifactName": "PingForAI-${version}-arm64.dmg" },
+    "publish": [{ "provider": "github", "owner": "ju-sir", "repo": "PingForAI" }]
   }
 }

@@ -7,7 +7,7 @@ const time = (ms: number): string => `T${ms}`;
 
 describe('checkNote', () => {
   it('says the version is current and when it was checked, once a check has finished', () => {
-    expect(checkNote({ phase: 'idle', lastCheck: 5 }, en, time)).toBe('lolPing is up to date · Checked T5');
+    expect(checkNote({ phase: 'idle', lastCheck: 5 }, en, time)).toBe('PingForAI is up to date · Checked T5');
   });
 
   it('says nothing before the first finished check', () => {

@@ -1,5 +1,6 @@
 import { app, type BrowserWindow } from 'electron';
 import { join } from 'node:path';
+import { copyFileSync, cpSync, existsSync, mkdirSync } from 'node:fs';
 import { platformOf, type Platform } from '../shared/platform';
 import { APP_SCHEME } from './appProtocol';
 
@@ -25,9 +26,21 @@ export const preloadPath = (name: Page): string => join(__dirname, '../preload',
 export const assetPath = (...parts: string[]): string =>
   app.isPackaged ? join(__dirname, '../renderer', ...parts) : join(app.getAppPath(), 'assets', ...parts);
 
-export const settingsDir = (): string => join(app.getPath('appData'), 'lolPing');
+export const settingsDir = (): string => join(app.getPath('appData'), 'PingForAI');
 
-/** Where `page` is served from: the Vite dev server in development, lolping://app in production. `hash` is without the #. */
+/** Preserve personal settings and emotes when upgrading from the original app. */
+export function migrateLegacySettings(): void {
+  const legacy = join(app.getPath('appData'), 'lolPing');
+  const target = settingsDir();
+  if (existsSync(target) || !existsSync(legacy)) return;
+  mkdirSync(target, { recursive: true });
+  for (const file of ['settings.json', 'ai-config.json']) {
+    if (existsSync(join(legacy, file))) copyFileSync(join(legacy, file), join(target, file));
+  }
+  if (existsSync(join(legacy, 'emotes'))) cpSync(join(legacy, 'emotes'), join(target, 'emotes'), { recursive: true });
+}
+
+/** Where `page` is served from: the Vite dev server in development, pingforai://app in production. `hash` is without the #. */
 export function pageUrl(page: Page, hash = ''): string {
   const devUrl = process.env.ELECTRON_RENDERER_URL;
   const suffix = hash ? `#${hash}` : '';

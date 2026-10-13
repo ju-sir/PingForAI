@@ -11,7 +11,7 @@ const api: OverlayApi = {
     listeners.set(channel, [...(listeners.get(channel) ?? []), cb as Listener]);
   },
   reportMissingAssets(names) {
-    console.warn('lolPing demo: missing assets', names);
+    console.warn('PingForAI demo: missing assets', names);
   },
   reportPing() {
     // the demo has no room to share pings with

@@ -7,7 +7,7 @@
 
 ## 1. Purpose
 
-Let several lolPing users join a **room** and see each other's pings. A ping dropped on one machine appears on every other member's screen at the same relative spot, scaled to their resolution, with the sender's name under it.
+Let several PingForAI users join a **room** and see each other's pings. A ping dropped on one machine appears on every other member's screen at the same relative spot, scaled to their resolution, with the sender's name under it.
 
 This spec covers **fun mode**: whole screen to whole screen. The people in a room usually do *not* see each other's screen. They ping each other for fun, or they watch the same full-screen content.
 
@@ -178,7 +178,7 @@ Transports move **sealed packets only**. Keys, validation and every decision sta
 
 ### 5.2 Keys
 
-- `master = scrypt(canonicalCode, salt = "lolping/room/v1", N = 2^15, r = 8, p = 1, dkLen = 32)`. Runs async in main, ~50–100 ms once per join.
+- `master = scrypt(canonicalCode, salt = "pingforai/room/v1", N = 2^15, r = 8, p = 1, dkLen = 32)`. Runs async in main, ~50–100 ms once per join.
 - From `master` via HKDF-SHA256 (no salt), each 32 bytes:
   - `msgKey` (`info = "msg"`): AES-256-GCM for every message.
   - `sigRoomId` (`info = "sig-room"`, hex): Trystero room ID (M2).
@@ -230,7 +230,7 @@ Transports move **sealed packets only**. Keys, validation and every decision sta
 - **Bind failure** (port in use) → status `unavailable`. Retried on resume and on leave/rejoin.
 - **VPNs:** works on virtual LANs that carry broadcast (ZeroTier, Radmin VPN). Tailscale drops broadcast, so Tailscale users connect over the internet path instead.
 - **Windows Firewall:** the installer is per-user and not elevated, so it can't add a rule. The first time a room starts, Windows shows its own "allow access" prompt.
-  - The Room page shows a one-time hint before that: allow lolPing, and make sure your Wi-Fi is a *Private* network, because the prompt's default doesn't cover Public networks.
+  - The Room page shows a one-time hint before that: allow PingForAI, and make sure your Wi-Fi is a *Private* network, because the prompt's default doesn't cover Public networks.
   - "Can't see LAN friends?" help text repeats this.
 - **macOS:** add `NSLocalNetworkUsageDescription` to `build.mac.extendInfo`. The macOS 15+ Local Network prompt appears at first room start.
   - Known limitation: ad-hoc-signed builds may re-ask for this, and for "accept incoming connections?", after updates.
@@ -243,7 +243,7 @@ Transports move **sealed packets only**. Keys, validation and every decision sta
 - **Hidden net window:** a `BrowserWindow` with `show: false`, `backgroundThrottling: false`, `sandbox: true`, `contextIsolation: true`, no Node integration. Its own renderer entry, `src/renderer/net/index.html`, served like the other renderers.
   - **CSP:** `default-src 'self'; connect-src` limited to the pinned relay list (`wss://…`). WebRTC itself isn't governed by CSP.
 - **Trystero:**
-  - `joinRoom({ appId: 'lolping', password: sigPassword, relayUrls: RELAYS, relayRedundancy: 3 }, sigRoomId)`.
+  - `joinRoom({ appId: 'pingforai', password: sigPassword, relayUrls: RELAYS, relayRedundancy: 3 }, sigRoomId)`.
   - One action channel carries packets as `Uint8Array`. Peer join/leave events are forwarded to main as `net:<trysteroPeerId>`.
   - `RELAYS` is a pinned list of public Nostr relays in `src/shared/relays.ts`, so the CSP and the code agree.
   - STUN: Trystero's defaults (public Google/Cloudflare STUN). No TURN.
@@ -403,7 +403,7 @@ This spec is committed together with the finished, tested v0.3.0 work, not befor
 
 - Share mode / share-window detection (idea #3).
 - TURN relays, or any server operated by the project.
-- Invite links, a `lolping://` protocol handler, a hosted join page, a nearby-room browser.
+- Invite links, a `pingforai://` protocol handler, a hosted join page, a nearby-room browser.
 - Persistent identities, kicking or banning. The remedy for an unwanted member is leaving and creating a new room.
 - Sharing the wheel itself, chat, voice.
 - IPv6 LAN discovery.

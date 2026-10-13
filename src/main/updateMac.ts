@@ -4,23 +4,23 @@ import { join } from 'node:path';
 import { isNewer, isVersion } from '../shared/update';
 import { DamagedDownloadError, type UpdateBackend, type UpdateInfo } from './updater';
 
-export const RELEASES_API = 'https://api.github.com/repos/darrenprx/lolPing';
+export const RELEASES_API = 'https://api.github.com/repos/ju-sir/PingForAI';
 const API_TIMEOUT_MS = 15_000;
 
 export interface MacBackendDeps {
-  /** RELEASES_API, or LOLPING_UPDATE_TEST_URL. */
+  /** RELEASES_API, or PINGFORAI_UPDATE_TEST_URL. */
   apiBase: string;
   currentVersion: string;
   fetch: typeof fetch;
   downloadsDir: string;
-  /** Brings lolPing to the front. A menu bar app is not the active app, and a dialog shown from the background can stay hidden. */
+  /** Brings PingForAI to the front. A menu bar app is not the active app, and a dialog shown from the background can stay hidden. */
   focus(): void;
   showDialog(message: string): Promise<void>;
   /** shell.openPath: resolves to '' on success, otherwise an error message. */
   openPath(path: string): Promise<string>;
   /** The updateMacDialog string in the current language. */
   dialogText(): string;
-  /** Quits lolPing through its graceful shutdown. */
+  /** Quits PingForAI through its graceful shutdown. */
   quit(): void;
 }
 
@@ -36,7 +36,7 @@ interface DmgAsset {
 
 const noop = (): void => undefined;
 const isObj = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
-const dmgName = (version: string): string => `lolPing-${version}-arm64.dmg`;
+const dmgName = (version: string): string => `PingForAI-${version}-arm64.dmg`;
 
 function httpUrl(v: unknown): string | null {
   if (typeof v !== 'string') return null;
@@ -64,7 +64,7 @@ export class MacBackend implements UpdateBackend {
   constructor(private readonly deps: MacBackendDeps) {}
 
   private get headers(): Record<string, string> {
-    return { 'User-Agent': `lolPing/${this.deps.currentVersion}` };
+    return { 'User-Agent': `PingForAI/${this.deps.currentVersion}` };
   }
 
   async check(): Promise<UpdateInfo | null> {
@@ -75,7 +75,7 @@ export class MacBackend implements UpdateBackend {
     const notesUrl = httpUrl(htmlUrl);
     if (typeof tag !== 'string' || !notesUrl || !Array.isArray(assets)) throw new Error('GitHub sent an unexpected answer');
 
-    // A tag that isn't v + x.y.z (a beta, say) is not a release lolPing offers.
+    // A tag that isn't v + x.y.z (a beta, say) is not a release PingForAI offers.
     const version = tag.startsWith('v') ? tag.slice(1) : '';
     if (!isVersion(version) || !isNewer(version, this.deps.currentVersion)) return this.noUpdate();
 

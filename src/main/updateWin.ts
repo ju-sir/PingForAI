@@ -10,15 +10,15 @@ export const CHECK_TIMEOUT_MS = 30_000;
  */
 export const INSTALL_TOAST_MS = 1500;
 
-const RELEASE_PAGE = 'https://github.com/darrenprx/lolPing/releases/tag/v';
+const RELEASE_PAGE = 'https://github.com/ju-sir/PingForAI/releases/tag/v';
 
 export interface WinBackendDeps {
-  /** LOLPING_UPDATE_TEST_URL: a folder that serves latest.yml, used instead of GitHub. */
+  /** PINGFORAI_UPDATE_TEST_URL: a folder that serves latest.yml, used instead of GitHub. */
   testUrl?: string;
   log(line: string): void;
   /** Shows "Restarting to update…" before the app quits. */
   toast(): void;
-  /** Whether lolPing is already quitting (the user chose Quit during the toast wait). */
+  /** Whether PingForAI is already quitting (the user chose Quit during the toast wait). */
   isQuitting(): boolean;
 }
 
@@ -42,7 +42,7 @@ export class WinBackend implements UpdateBackend {
   ) {
     const u = this.updater;
     u.autoDownload = false; // nothing downloads until the user clicks Update
-    u.autoInstallOnAppQuit = false; // and nothing installs by itself when lolPing quits
+    u.autoInstallOnAppQuit = false; // and nothing installs by itself when PingForAI quits
     u.logger = {
       info: (m) => this.deps.log(lineOf(m)),
       warn: (m) => this.deps.log(`warn: ${lineOf(m)}`),
@@ -99,7 +99,7 @@ export class WinBackend implements UpdateBackend {
   async install(_info: UpdateInfo): Promise<void> {
     this.deps.toast();
     await new Promise<void>((resolve) => setTimeout(resolve, INSTALL_TOAST_MS)); // the update stays 'installing' meanwhile
-    // Quit was chosen during the wait: lolPing's own shutdown is under way, and the installer must not start behind it.
+    // Quit was chosen during the wait: PingForAI's own shutdown is under way, and the installer must not start behind it.
     if (this.deps.isQuitting()) return;
     // quitAndInstall reports a failure to start the installer as an 'error' event, not by throwing: catch the event it raises.
     let failure: Error | undefined;
@@ -108,7 +108,7 @@ export class WinBackend implements UpdateBackend {
     };
     this.updater.on('error', onError);
     try {
-      // Silent, into the existing folder, then relaunch. It quits the app, which runs lolPing's own shutdown (before-quit).
+      // Silent, into the existing folder, then relaunch. It quits the app, which runs PingForAI's own shutdown (before-quit).
       this.updater.quitAndInstall(true, true);
     } finally {
       this.updater.removeListener('error', onError);

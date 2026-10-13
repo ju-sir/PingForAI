@@ -3,6 +3,22 @@ import type { NativeImage } from 'electron';
 import { AiAssist, buildVisionRequest, focusCropRect } from '../../src/main/aiAssist';
 
 describe('ai assistance', () => {
+  it('uses changed connection settings immediately and stops requests after clearing the key', async () => {
+    let config = { apiKey: 'first-key', endpoint: 'https://first.example/chat', model: 'first-model' };
+    const request = vi.fn<typeof fetch>().mockImplementation(async () => new Response(JSON.stringify({ choices: [{ message: { content: 'answer' } }] }), { status: 200 }));
+    const ai = new AiAssist({ getConfig: () => config, fetch: request, cooldownMs: 0 });
+    const image = { toPNG: () => Buffer.from('test-image') } as NativeImage;
+    await ai.explain(image, 'test');
+    config = { apiKey: 'replacement-key', endpoint: 'https://second.example/chat', model: 'second-model' };
+    await ai.explain(image, 'test');
+    expect(request.mock.calls[1][0]).toBe(config.endpoint);
+    expect(request.mock.calls[1][1]?.headers).toMatchObject({ Authorization: 'Bearer replacement-key' });
+    expect(JSON.parse(request.mock.calls[1][1]?.body as string).model).toBe('second-model');
+    config = { ...config, apiKey: '' };
+    expect(ai.configured).toBe(false);
+    expect(await ai.explain(image, 'test')).toBeNull();
+    expect(request).toHaveBeenCalledTimes(2);
+  });
   it('uses a configured chat endpoint and extracts the vision answer', async () => {
     const request = vi.fn<typeof fetch>().mockResolvedValue(new Response(JSON.stringify({ choices: [{ message: { content: '  这是一个错误提示  ' } }] }), { status: 200 }));
     const ai = new AiAssist({ apiKey: 'test-key', model: 'deepseek-flash', endpoint: 'https://api.deepseek.com/chat/completions', fetch: request });

@@ -55,9 +55,9 @@ export const customHash = (ref: EmoteRef): string => ref.slice(2);
 export const emoteAnimUrl = (slug: string): string => `../emotes/${slug}.webp`;
 export const emoteIconUrl = (slug: string): string => `../emotes/${slug}.png`;
 export const emoteSoundUrl = (slug: string): string => `../emotes/${slug}.ogg`;
-/** Imported emotes live in the user's data folder; the lolping:// protocol serves them. */
-export const customStillUrl = (hash: string): string => `lolping://emotes/${hash}.webp`;
-export const customAnimUrl = (hash: string): string => `lolping://emotes/${hash}.anim`;
+/** Imported emotes live in the user's data folder; the pingforai:// protocol serves them. */
+export const customStillUrl = (hash: string): string => `pingforai://emotes/${hash}.webp`;
+export const customAnimUrl = (hash: string): string => `pingforai://emotes/${hash}.anim`;
 
 /** Every bundled file that has to ship, relative to assets/. */
 export function allEmoteAssetFiles(): string[] {

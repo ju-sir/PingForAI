@@ -6,7 +6,7 @@ Everything is on branch `rooms-internet` and is **uncommitted**. It becomes one 
 - `npm run typecheck`
 - `npm test`: 339 tests
 - `npm run test:helper`: 284
-- `npm run build`, `npm run build:site` and `npm run dist`, which produce `release/lolPing-Setup-0.4.0.exe`
+- `npm run build`, `npm run build:site` and `npm run dist`, which produce `release/PingForAI-Setup-0.4.0.exe`
 
 **The relay probe passed.** All 6 pinned relays met every check in a full rerun:
 - median round trip 100–400 ms;
@@ -19,7 +19,7 @@ Everything is on branch `rooms-internet` and is **uncommitted**. It becomes one 
 - Pings went both ways: 10 of 10 to the app, 3 of 3 from the app.
 - Turning **Allow internet connections** off closed all 6 relay sockets at once. Turning it back on reconnected within 1.2 s, and quick off/on flips left exactly 6 sockets.
 - Leaving and rejoining the same code works.
-- With no relay reachable (dev-only `LOLPING_RELAYS=wss://127.0.0.1:9`):
+- With no relay reachable (dev-only `PINGFORAI_RELAYS=wss://127.0.0.1:9`):
   - "Internet unavailable" showed within 0.2 s, and the room still became active after 3 s instead of 15 s.
   - Retry pressed 8 times caused no errors.
 - Quitting while in a room exits in under 0.2 s.
@@ -28,7 +28,7 @@ What follows needs a second device, a second network, or a Mac.
 
 ## Before you start
 
-- Install `release/lolPing-Setup-0.4.0.exe` on each Windows PC. On a Mac, build with `npm run dist:mac`, or use the CI build.
+- Install `release/PingForAI-Setup-0.4.0.exe` on each Windows PC. On a Mac, build with `npm run dist:mac`, or use the CI build.
 - **Allow internet connections** is on by default (Settings → Room).
 - For a second network, a phone hotspot is easiest.
 
@@ -59,7 +59,7 @@ What follows needs a second device, a second network, or a Mac.
    - Turn it back on. You find each other again within about 10 s.
 2. Alone in a room with the switch off: after 20 s, the hint "Friends on another network? Turn on Allow internet connections." appears.
 3. Optional:
-   - Block lolPing in the firewall or turn off the network adapter while in a room. "Internet unavailable" appears with **Retry**.
+   - Block PingForAI in the firewall or turn off the network adapter while in a room. "Internet unavailable" appears with **Retry**.
    - Restore the network and press **Retry**. The card goes away within a few seconds.
 
 ## 5. Sleep, rejoin, spam

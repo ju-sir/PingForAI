@@ -8,7 +8,7 @@ Commands (the candidate gallery itself is extract_assets.py --emote-gallery):
   py -3.14 tools/extract-assets/emote_bake.py specials --league "C:/Riot Games/League of Legends"
   py -3.14 tools/extract-assets/emote_bake.py sounds --league "C:/Riot Games/League of Legends"
   py -3.14 tools/extract-assets/emote_bake.py bake --league "C:/Riot Games/League of Legends" --emote 4341 --emote 3236 \
-      --out %TEMP%/lolping-emote-bake --vgmstream tools/extract-assets/.cache/vgmstream/vgmstream-cli.exe
+      --out %TEMP%/pingforai-emote-bake --vgmstream tools/extract-assets/.cache/vgmstream/vgmstream-cli.exe
   (bake writes a gallery.html of just those emotes; serve the folder over HTTP to view it; --glow-opacity 0.3 draws
   the halos at that opacity instead of GLOW_OPACITY)
 
@@ -1633,7 +1633,7 @@ To add emotes: tick them, copy the ids, and append <code>'slug': id</code> to EM
 <script type="application/json" id="data">@@DATA@@</script>
 <script type="application/json" id="preset">@@PRESET@@</script>
 <script>
-const DURATION_MS = @@DURATION_MS@@, CHUNK = 120, KEY = 'lolping-emote-gallery';
+const DURATION_MS = @@DURATION_MS@@, CHUNK = 120, KEY = 'pingforai-emote-gallery';
 const DATA = JSON.parse(document.getElementById('data').textContent);
 const byId = new Map(DATA.map(d => [String(d.id), d]));
 const order = new Map(DATA.map((d, i) => [String(d.id), i]));
@@ -1926,7 +1926,7 @@ def main() -> None:
     b = sub.add_parser('bake', help='bake emotes to WebP (+ .ogg) and write a gallery.html of them')
     b.add_argument('--league', type=Path, required=True)
     b.add_argument('--emote', type=int, action='append', required=True)
-    b.add_argument('--out', type=Path, default=Path(tempfile.gettempdir()) / 'lolping-emote-bake')
+    b.add_argument('--out', type=Path, default=Path(tempfile.gettempdir()) / 'pingforai-emote-bake')
     b.add_argument('--vgmstream', help='path to vgmstream-cli.exe (sounds are skipped without it)')
     b.add_argument('--glow-opacity', type=float, help=f'halo opacity for this run (default {GLOW_OPACITY:g})')
     args = ap.parse_args()

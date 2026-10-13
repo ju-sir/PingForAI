@@ -196,7 +196,7 @@ for (const r of results) {
     pct(r.soak), r.soak.closes, r.verdict + (r.reasons.length ? ` (${r.reasons.join('; ')})` : ''),
   ].join('\t'));
 }
-const report = join(tmpdir(), 'lolping-relay-probe.json');
+const report = join(tmpdir(), 'pingforai-relay-probe.json');
 writeFileSync(report, JSON.stringify({ at: new Date().toISOString(), burstRate, soakMin: Number(values['soak-min']), results }, null, 2));
 console.log(`\n${results.filter((r) => r.verdict === 'PASS').length}/${results.length} passed. Report: ${report}`);
 process.exit(0);

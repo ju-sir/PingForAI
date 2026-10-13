@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Re-extracts lolPing's ping sounds (and optionally textures) from a local League of Legends install.
+"""Re-extracts PingForAI's ping sounds (and optionally textures) from a local League of Legends install.
 
 Requirements:
   * Python 3.14+ (uses the built-in compression.zstd module)
@@ -325,7 +325,7 @@ def main() -> None:
     ap.add_argument('--dds-dir', type=Path, help='folder of .dds textures to convert to PNG')
     ap.add_argument('--wad-textures', action='store_true', help='with --league: extract only the WAD_TEXTURES, no sounds')
     ap.add_argument('--emote-gallery', action='store_true',
-                    help='with --league: list every emote in <temp>/lolping-emote-gallery/gallery.html (EMOTE_SET '
+                    help='with --league: list every emote in <temp>/pingforai-emote-gallery/gallery.html (EMOTE_SET '
                          'pre-ticked; candidates baked with their sounds), no ping sounds')
     ap.add_argument('--emotes', action='store_true',
                     help='with --league: bake EMOTE_SET into assets/emotes/ and generate src/shared/emoteCatalog.ts, '
@@ -345,7 +345,7 @@ def main() -> None:
         import emote_bake
 
         sys.stdout.reconfigure(encoding='utf-8')
-        out = Path(tempfile.gettempdir()) / 'lolping-emote-gallery'
+        out = Path(tempfile.gettempdir()) / 'pingforai-emote-gallery'
         preset = {'set': EMOTE_SET, 'wheel': DEFAULT_EMOTE_WHEEL, 'click': DEFAULT_CLICK_EMOTE}
         print('gallery:', emote_bake.build_gallery(args.league, out, args.vgmstream, preset=preset))
         print(f'view it with: py -3.14 -m http.server 8766 --directory "{out}"')

@@ -4,7 +4,7 @@ import { api } from '../api';
 import { useText } from '../text';
 
 /**
- * macOS only: shown while lolPing has no Accessibility access. `stale`: macOS lists lolPing as allowed but the
+ * macOS only: shown while PingForAI has no Accessibility access. `stale`: macOS lists PingForAI as allowed but the
  * helper is still refused, which is what an entry left over from an earlier (differently signed) build looks like.
  */
 export function PermissionCard({ stale }: { stale: boolean }) {

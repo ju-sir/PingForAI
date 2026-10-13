@@ -19,7 +19,7 @@ function deferred<T>(): Deferred<T> {
   return { promise, resolve, reject };
 }
 
-const INFO: UpdateInfo = { version: '0.5.1', notesUrl: 'https://github.com/darrenprx/lolPing/releases/tag/v0.5.1' };
+const INFO: UpdateInfo = { version: '0.5.1', notesUrl: 'https://github.com/ju-sir/PingForAI/releases/tag/v0.5.1' };
 
 /** A backend whose calls settle when the test says so. */
 class FakeBackend implements UpdateBackend {
@@ -84,7 +84,7 @@ describe('tray Check for updates', () => {
     expect(toasts).toEqual([]); // nothing to say while it is checking
     backend.checks[0].resolve(null);
     await flush();
-    expect(toasts).toEqual([['lolPing is up to date', '']]);
+    expect(toasts).toEqual([['PingForAI is up to date', '']]);
   });
 
   it('toasts the error when offline, rate-limited or timed out', async () => {

@@ -37,9 +37,9 @@
   - internet presence every 10 s, alive 25 s, member drop after 30 s;
   - settle 3 s after the relays leave `starting`, capped at 15 s.
 - **Dev runs:**
-  - Back up `%APPDATA%\lolPing\settings.json` first and restore it afterwards.
+  - Back up `%APPDATA%\PingForAI\settings.json` first and restore it afterwards.
   - Check the running app over CDP (DevTools remote debugging), never desktop computer-use.
-  - Use no firewall or other system-setting changes; `LOLPING_RELAYS` stands in for "relays blocked".
+  - Use no firewall or other system-setting changes; `PINGFORAI_RELAYS` stands in for "relays blocked".
 - **Style:** match the surrounding code: comment density, naming, and the EventEmitter plus `status` pattern of `src/main/lanTransport.ts`.
 
 ## Review Focus
@@ -107,7 +107,7 @@ export function closeMessage(subId: string): string;                            
   - `parseRelayMessage` builds fresh objects from known fields only. It never spreads parsed input.
 - [ ] **Step 4: Run the tests and see them pass.** `npx vitest run tests/main/nostrEvent.test.ts` → PASS.
 - [ ] **Step 5: Write the probe** in `tools/relay-probe/`.
-  - **`run.mjs`:** the same esbuild runner as `tools/room-peer/run.mjs`, building `probe.ts` to `<tmpdir>/lolping-relay-probe.mjs`.
+  - **`run.mjs`:** the same esbuild runner as `tools/room-peer/run.mjs`, building `probe.ts` to `<tmpdir>/pingforai-relay-probe.mjs`.
   - **Candidates:**
     - `wss://relay.damus.io`, `wss://nos.lol`, `wss://relay.primal.net`, `wss://nostr.mom`, `wss://offchain.pub`, `wss://relay.nostr.net`, `wss://nostr.oxtr.dev`, `wss://relay.snort.social`;
     - `wss://nostr-pub.wellorder.net`, `wss://nostr.bitcoiner.social`, `wss://relay.nostr.bg`, `wss://relay.agentry.com`, `wss://relay.layer.systems`, `wss://nostr.stakey.net`, `wss://relay.routstr.com`, `wss://nostr.rblb.it`.
@@ -119,7 +119,7 @@ export function closeMessage(subId: string): string;                            
     3. A 30 s burst at `--burst-rate` per second: count `rate-limited:` replies and the share of events echoed.
     4. A soak at one event per 10 s: count closes, and reconnect and resubscribe after each.
   - **Verdict per relay** uses the spec §6.2 table.
-  - **Output:** a table of URL, connect ms, accepted, median, p95, burst echo %, rate-limited count, soak closes, and PASS or FAIL with the reason. The JSON report goes to `<os.tmpdir()>/lolping-relay-probe.json`.
+  - **Output:** a table of URL, connect ms, accepted, median, p95, burst echo %, rate-limited count, soak closes, and PASS or FAIL with the reason. The JSON report goes to `<os.tmpdir()>/pingforai-relay-probe.json`.
   - **`README.md`:** what the probe does, that it sends about 250 ephemeral events per relay and shows the relays this machine's IP address, and how to use it.
 - [ ] **Step 6: Run the probe** (the user approved it): `node tools/relay-probe/run.mjs`. It takes about 11 minutes.
 - [ ] **Step 7: Apply the gate** (spec §6.2).
@@ -164,7 +164,7 @@ export class RelayConnection extends EventEmitter {
 - `tests/main/fixtures/fakeSocket.ts` exports `FakeSocket` (fields `url`, `sent: string[]`, `closed`; methods `open()`, `receive(msg: unknown[] | string)`, `drop()` which fires `onclose`) and `fakeSockets(): { factory: SocketFactory; sockets: FakeSocket[] }`.
 
 **Values:**
-- Subscription id `'lolping'`; `since` = `floor(now / 1000) − 600`.
+- Subscription id `'pingforai'`; `since` = `floor(now / 1000) − 600`.
 - Connect deadline 10 s.
 - Health 25 s, counted from going live or from the last echo.
 - Backoff 2 s → 60 s, ×2, jitter `1 + (random() * 2 − 1) * 0.2`; reset after 60 s healthy.
@@ -173,7 +173,7 @@ export class RelayConnection extends EventEmitter {
 - Retiring `OK` prefixes: `blocked:`, `restricted:`, `auth-required:`, `pow:`, `invalid:`.
 
 - [ ] **Step 1: Write the failing tests.** Use `vi.useFakeTimers()`, `random = () => 0.5` (no jitter) and a fake socket.
-  - `opens, subscribes and goes live`: the first message sent is exactly `["REQ","lolping",{"kinds":[24747],"#x":[topic],"since":<now s − 600>,"limit":0}]`, and `'live'` is emitted.
+  - `opens, subscribes and goes live`: the first message sent is exactly `["REQ","pingforai",{"kinds":[24747],"#x":[topic],"since":<now s − 600>,"limit":0}]`, and `'live'` is emitted.
   - `publishes only while live`.
   - `separates echoes from other members' events, and ignores other subscriptions, kinds and topics`.
   - `is healthy after the first echo, and down after 25 s without one`, then a new socket appears after exactly 2000 ms.
@@ -366,7 +366,7 @@ export class RelayTransport extends EventEmitter implements Transport {
   - In the `registerSettingsIpc` deps, `room.retryInternet(): void`.
 
 - [ ] **Step 1: Wire `index.ts`.**
-  - Create `relay = new RelayTransport({ urls: relayUrls() })`. `relayUrls()` returns `process.env.LOLPING_RELAYS` split on commas, keeping `wss://` entries, when `!app.isPackaged` and the variable is set. Otherwise it returns `RELAYS`.
+  - Create `relay = new RelayTransport({ urls: relayUrls() })`. `relayUrls()` returns `process.env.PINGFORAI_RELAYS` split on commas, keeping `wss://` entries, when `!app.isPackaged` and the variable is set. Otherwise it returns `RELAYS`.
   - `transports: [lan, relay]`.
   - Call `room.setInternetAllowed(settings.allowInternet)` before the rejoin-on-launch line.
   - In `store.on('change')`: when `allowInternet` changed, call `room.setInternetAllowed(s.allowInternet)`, then `pushRoom()`.
@@ -402,7 +402,7 @@ export class RelayTransport extends EventEmitter implements Transport {
 - [ ] **Step 4:** `npm test && npm run typecheck && npm run build` → PASS.
 - [ ] **Step 5: Look at it.** In a dev run, check over CDP:
   - the switch;
-  - the unavailable card, with `LOLPING_RELAYS=wss://127.0.0.1:9` so no relay is reachable;
+  - the unavailable card, with `PINGFORAI_RELAYS=wss://127.0.0.1:9` so no relay is reachable;
   - Retry;
   - the lonely hint with the switch off.
 
@@ -449,7 +449,7 @@ export class RelayTransport extends EventEmitter implements Transport {
     - Turning "Allow internet connections" off gives `internet: 'off'` and closes the relay sockets.
     - The peer sees a `disconnected` after about 30 s, not `left`.
     - Turning it back on brings the member back.
-  - **No relays:** `LOLPING_RELAYS=wss://127.0.0.1:9` shows the unavailable card. Retry reconnects at once.
+  - **No relays:** `PINGFORAI_RELAYS=wss://127.0.0.1:9` shows the unavailable card. Retry reconnects at once.
   - **Quit:** the app exits within 1 s while in a room.
   - **Cleanup:** settings restored, processes stopped.
 - [ ] **Step 4: Write the checklist file.**

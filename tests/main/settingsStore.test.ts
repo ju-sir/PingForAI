@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { SettingsStore } from '../../src/main/settingsStore';
 import { DEFAULT_SETTINGS, type Settings } from '../../src/shared/settings';
 
-const tempDir = () => mkdtempSync(join(tmpdir(), 'lolping-'));
+const tempDir = () => mkdtempSync(join(tmpdir(), 'pingforai-'));
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 /** Waits for the save load() scheduled on its own to reach disk: a fixed sleep raced slow CI runners. */
 const savedTagColor = (dir: string, color: number) =>

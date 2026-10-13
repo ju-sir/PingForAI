@@ -1,4 +1,8 @@
-<h1 align="center"><img src="assets/textures/generic_ping.png" width="56" alt=""><br>lolPing</h1>
+<h1 align="center"><img src="assets/textures/generic_ping.png" width="56" alt=""><br>PingForAI</h1>
+
+PingForAI 基于 **Danrui Meng（darrenprx）** 的开源项目 [lolPing](https://github.com/darrenprx/lolPing) 增加截图读图、信号提示词和 AI 配置功能，是独立维护的衍生项目。原作者的 MIT 版权与许可全文保留在 [LICENSE](LICENSE)，我们的新增源码同样采用 MIT；来源及 Riot Games 素材说明见 [NOTICE.md](NOTICE.md)。
+
+当前仓库尚未发布安装包，请通过下方开发方式运行。向原作者贡献功能的流程见 [CONTRIBUTING.md](CONTRIBUTING.md)。下方历史截图来自原项目，界面可能与 PingForAI 有所不同。
 
 <p align="center">
   <a href="README.md">English</a> | 简体中文
@@ -10,46 +14,43 @@
   按住 <b>Ctrl</b>（Mac 上是 <b>⌃ Control</b>）拖动打开表情轮盘：英雄联盟的表情，或你自己的图片。
 </p>
 
-<p align="center">
-  <a href="https://github.com/darrenprx/lolPing/releases/latest"><b>下载 Windows 版</b></a> ·
-  <a href="https://github.com/darrenprx/lolPing/releases/latest"><b>下载 Mac 版</b></a>（Apple 芯片，实验性）
-</p>
+<p align="center"><a href="#从源码构建"><b>从源码运行</b></a></p>
 
 <p align="center">
-  <a href="https://github.com/darrenprx/lolPing/actions/workflows/ci.yml"><img src="https://github.com/darrenprx/lolPing/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://github.com/darrenprx/lolPing/releases/latest"><img src="https://img.shields.io/github/v/release/darrenprx/lolPing" alt="最新版本"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/darrenprx/lolPing" alt="MIT 许可证"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/ju-sir/PingForAI" alt="MIT 许可证"></a>
 </p>
 
 <p align="center"><img src="docs/media/demo.zh-CN.gif" width="880" alt="一个程序卡死弹出“未响应”对话框，信号轮盘在上面连发三个“敌人消失”信号"></p>
 
-信号和表情会出现在全屏录制/共享画面里，所以在 Discord 或 OBS 上看你直播的朋友也能看到。lolPing 只是一个桌面小玩具：它不会读取、修改或注入英雄联盟本身。
+信号和表情会出现在全屏录制/共享画面里，所以在 Discord 或 OBS 上看你直播的朋友也能看到。PingForAI 只是一个桌面小玩具：它不会读取、修改或注入英雄联盟本身。
 
 ## 安装
 
+以下说明适用于将来发布的安装包，目前请从源码运行。当前本地开发环境也已支持 Intel Mac。
+
 ### Windows
 
-1. 从[最新版本](https://github.com/darrenprx/lolPing/releases/latest)下载 `lolPing-Setup-<版本号>.exe`。
+1. 从[最新版本](https://github.com/ju-sir/PingForAI/releases/latest)下载 `PingForAI-Setup-<版本号>.exe`。
 2. 运行安装程序。安装程序没有代码签名，Windows SmartScreen 可能会提示“Windows 已保护你的电脑”：点击**更多信息**，再点**仍要运行**。
-3. lolPing 会打开设置窗口并常驻系统托盘。按住 Alt 在任意位置拖动即可发信号。
+3. PingForAI 会打开设置窗口并常驻系统托盘。按住 Alt 在任意位置拖动即可发信号。
 
-lolPing 面向 64 位 Windows 11。Windows 10 也许可以用，但没有测试过。
+PingForAI 面向 64 位 Windows 11。Windows 10 也许可以用，但没有测试过。
 
 ### macOS（实验性）
 
-Mac 版需要 Apple 芯片（M1 或更新）的 Mac 和 macOS 12 或更新版本。它会自动构建和测试，但还没在真实的 Mac 上用过多少。遇到问题请[反馈](https://github.com/darrenprx/lolPing/issues)。
+安装包目标为 Apple 芯片，当前未启用自动发布。默认 Electron 44 不支持 macOS 12；Intel Mac 的 macOS 12 本地开发已使用 Electron 37.10.3 验证，配置方式见下文。遇到问题请[反馈](https://github.com/ju-sir/PingForAI/issues)。
 
-1. 从[最新版本](https://github.com/darrenprx/lolPing/releases/latest)下载 `lolPing-<版本号>-arm64.dmg`，打开后把 lolPing 拖进“应用程序”。
-2. 打开 lolPing。它没有经过注册 Apple 开发者的签名，macOS 会提示无法检查其是否包含恶意软件：点“完成”，打开**系统设置 → 隐私与安全性**，向下滚动，在 lolPing 的提示旁点**仍要打开**并确认。
-   如果 macOS 提示 lolPing“已损坏”，请在“终端”中运行 `xattr -dr com.apple.quarantine /Applications/lolPing.app`，然后再次打开。
-3. lolPing 会请求**辅助功能**权限，用来读取鼠标和键盘。点“打开系统设置”并打开 lolPing。授权后立即可以发信号。
-4. lolPing 常驻菜单栏。按住 ⌥ Option 在任意位置拖动即可发信号。
+1. 从[最新版本](https://github.com/ju-sir/PingForAI/releases/latest)下载 `PingForAI-<版本号>-arm64.dmg`，打开后把 PingForAI 拖进“应用程序”。
+2. 打开 PingForAI。它没有经过注册 Apple 开发者的签名，macOS 会提示无法检查其是否包含恶意软件：点“完成”，打开**系统设置 → 隐私与安全性**，向下滚动，在 PingForAI 的提示旁点**仍要打开**并确认。
+   如果 macOS 提示 PingForAI“已损坏”，请在“终端”中运行 `xattr -dr com.apple.quarantine /Applications/PingForAI.app`，然后再次打开。
+3. PingForAI 会请求**辅助功能**权限，用来读取鼠标和键盘。点“打开系统设置”并打开 PingForAI。授权后立即可以发信号。
+4. PingForAI 常驻菜单栏。按住 ⌥ Option 在任意位置拖动即可发信号。
 
-**每次更新后**，macOS 都会忘记辅助功能权限，因为应用没有固定的开发者签名。在**隐私与安全性 → 辅助功能**中选中 lolPing，点 **–** 移除，再重新打开。设置窗口会一步步提示你。
+**每次更新后**，macOS 都会忘记辅助功能权限，因为应用没有固定的开发者签名。在**隐私与安全性 → 辅助功能**中选中 PingForAI，点 **–** 移除，再重新打开。设置窗口会一步步提示你。
 
 ### 升级旧版本
 
-从 v0.4 或更早的版本更新：请手动下载一次新版本。从 v0.5 起，lolPing 会自己更新（见[更新](#更新)）。
+从 v0.4 或更早的版本更新：请手动下载一次新版本。从 v0.5 起，PingForAI 会自己更新（见[更新](#更新)）。
 
 ## 使用
 
@@ -68,7 +69,7 @@ Mac 版需要 Apple 芯片（M1 或更新）的 Mac 和 macOS 12 或更新版本
 
 ## 设置
 
-<img src="docs/media/settings.zh-CN.png" width="760" alt="lolPing 设置窗口，包含触发、开关、信号与声音、轮盘、表情、房间和应用几个部分">
+<img src="docs/media/settings.zh-CN.png" width="760" alt="PingForAI 设置窗口，包含触发、开关、信号与声音、轮盘、表情、房间和应用几个部分">
 
 - **触发键：** Alt、Ctrl、Shift、Win、Caps Lock、鼠标侧键 4/5，或任意其他按键（Mac 上：Option、Control、Shift、Command、鼠标侧键 4/5，或任意其他按键）。开启信号时，自定义按键在其他程序里不会再输入字符。
 - **Alt + 单击发送信号：** 默认关闭，这样平时的 Alt + 单击快捷操作不受影响。发送的是轮盘编辑器中心的信号（默认是普通信号）。
@@ -86,9 +87,11 @@ Mac 版需要 Apple 芯片（M1 或更新）的 Mac 和 macOS 12 或更新版本
 
 macOS 12 本地开发需使用兼容的 Electron 运行时（已验证 Electron 37.10.3），并在 `.env` 中设置 `ELECTRON_EXEC_PATH` 为其可执行文件的绝对路径；默认 Electron 44 无法在 macOS 12 启动。原生输入助手同时构建 Intel 和 Apple 芯片版本。首次使用需为运行时开启辅助功能和屏幕录制权限。
 
-在设置 → AI 援助中，可以为每个信号单独选择动作（关闭、解释并显示、复制答案、显示并复制）和提示词。触发对应信号时，lolPing 会截取信号附近的屏幕内容，并将截图与该信号的提示词发送给视觉模型。
+在设置 → AI 援助中，可以为每个信号单独选择动作（关闭、解释并显示、复制答案、显示并复制）和提示词。触发对应信号时，PingForAI 会截取信号附近的屏幕内容，并将截图与该信号的提示词发送给视觉模型。
 
-截图不会发送给房间成员，也不会写入磁盘。API Key 只从环境变量读取，不会保存到设置文件；未配置时 AI 动作自动跳过。截图默认取信号周围 640×480 像素，并限制每 8 秒最多请求一次。
+在设置 → AI 援助 → AI 服务连接中填写 HTTPS 读图接口、模型和 API Key，点击“保存连接配置”后立即生效。密钥通过操作系统加密，单独保存在应用数据目录的 `ai-config.json`，不写入普通设置，也不会回传给界面；可以替换或清除。未保存连接配置时，程序沿用 `.env` 的初始值；保存后以界面配置为准。
+
+截图不会发送给房间成员，也不会写入磁盘。截图默认取信号周围 640×480 像素，并限制每 8 秒最多请求一次。未配置密钥时 AI 动作自动跳过。
 
 兼容 OpenAI Chat Completions 多模态格式的中转服务示例：
 
@@ -103,17 +106,17 @@ npm run dev
 
 注意：`/v1/images/generations` 是生图接口，不能直接读取截图；程序调用的是同一服务的 `/v1/chat/completions` 多模态接口。如果该服务没有提供这个接口，需要让服务商开启视觉对话模型，或换成支持图片输入的模型。
 
-设置在 Windows 上保存在 `%APPDATA%\lolPing\settings.json`，在 Mac 上保存在 `~/Library/Application Support/lolPing/settings.json`。
+设置在 Windows 上保存在 `%APPDATA%\PingForAI\settings.json`，在 Mac 上保存在 `~/Library/Application Support/PingForAI/settings.json`。
 
 ## 更新
 
-lolPing 在启动 10 秒后向 GitHub 检查一次新版本，之后每 6 小时检查一次。有新版本时，屏幕上会出现提示，托盘菜单和**设置 → 应用 → 关于**里也会出现**更新**。更新前会先询问：在你点击之前不会下载任何内容。
+PingForAI 在启动 10 秒后向 GitHub 检查一次新版本，之后每 6 小时检查一次。有新版本时，屏幕上会出现提示，托盘菜单和**设置 → 应用 → 关于**里也会出现**更新**。更新前会先询问：在你点击之前不会下载任何内容。
 
-- **Windows：** 点一下即可下载安装程序、校验、静默安装到原来的文件夹，并重启 lolPing。重启后会打开设置窗口。
-- **Mac：** lolPing 把磁盘映像下载到“下载”文件夹，校验后先说明接下来的步骤，再打开它，然后退出。请把 lolPing 拖进“应用程序”，选择**替换**，打开它，并再次允许辅助功能。
+- **Windows：** 点一下即可下载安装程序、校验、静默安装到原来的文件夹，并重启 PingForAI。重启后会打开设置窗口。
+- **Mac：** PingForAI 把磁盘映像下载到“下载”文件夹，校验后先说明接下来的步骤，再打开它，然后退出。请把 PingForAI 拖进“应用程序”，选择**替换**，打开它，并再次允许辅助功能。
 - 托盘菜单或**设置 → 应用 → 关于**中的**检查更新**会立即检查。从托盘菜单检查时，结果（已是最新版本，或出错的原因）会以屏幕通知的形式显示。
-- **自动检查更新**（设置 → 应用，默认开启）控制定时检查。关闭后，只有在你点击**检查更新**或**更新**时，lolPing 才会联系 GitHub。
-- **隐私：** 每次检查都会让 GitHub 知道你的 IP 地址和 lolPing 的版本号，别的都不会发送。
+- **自动检查更新**（设置 → 应用，默认开启）控制定时检查。关闭后，只有在你点击**检查更新**或**更新**时，PingForAI 才会联系 GitHub。
+- **隐私：** 每次检查都会让 GitHub 知道你的 IP 地址和 PingForAI 的版本号，别的都不会发送。
 
 ## 和朋友一起发信号（房间）
 
@@ -123,11 +126,11 @@ lolPing 在启动 10 秒后向 GitHub 检查一次新版本，之后每 6 小时
 2. 复制房间码（例如 `PING-7KQ4M-2HXTR`）发给朋友。
 3. 朋友复制房间码后，在托盘菜单中点击**从剪贴板加入**，或粘贴到房间页面后点击**加入**。
 
-- **同一网络：** 第一次使用时，Windows 会询问是否允许 lolPing 使用网络：请允许，并把 Wi‑Fi 设置为**专用网络**（公用网络会被 Windows 阻止）。Mac 会询问是否允许查找本地网络中的设备。
+- **同一网络：** 第一次使用时，Windows 会询问是否允许 PingForAI 使用网络：请允许，并把 Wi‑Fi 设置为**专用网络**（公用网络会被 Windows 阻止）。Mac 会询问是否允许查找本地网络中的设备。
 - **不同网络：** 打开**允许互联网连接**（默认开启）后，任何地方的朋友都能用同一个房间码加入。信号通过免费的公共 [Nostr](https://nostr.com) 中继传输，比局域网稍慢一点；能走局域网时仍会优先使用局域网。ZeroTier、Radmin VPN 等虚拟局域网同样可用，Tailscale 用户则会直接通过互联网连接。
 - 信号会显示在编号相同的显示器上（1 号是主显示器），没有则显示在 1 号上。
 - **表情**和信号一样发给房间：朋友会在自己的屏幕上看到，下面带着你的名字。你自己的图片目前在朋友那里显示为“?”。还在用 v0.4 或更早版本的朋友看不到表情，房间页面会在他们的名字下面提示。
-- **房间静音**、单独静音某个人，以及**接收信号和表情上限**（可选不限，两者合并计算）可以控制刷屏。用快捷键暂停 lolPing 时，房间里的信号和表情也会一起暂停。
+- **房间静音**、单独静音某个人，以及**接收信号和表情上限**（可选不限，两者合并计算）可以控制刷屏。用快捷键暂停 PingForAI 时，房间里的信号和表情也会一起暂停。
 - 一个房间最多 8 人。想踢掉某人，就离开并创建一个新房间。
 - **隐私：** 信号、表情和名字使用由房间码生成的密钥进行端到端加密。同一网络中的人可以看到你的本地 IP 地址。开启互联网连接后，公共中继可以看到你的 IP 地址、匿名房间 ID 和发送时间，但永远看不到你的信号、表情和名字。关闭**允许互联网连接**即可只在局域网中使用。
 
@@ -136,7 +139,7 @@ lolPing 在启动 10 秒后向 GitHub 检查一次新版本，之后每 6 小时
 - 在以管理员身份运行的窗口（例如任务管理器）上无法打开轮盘，因为 Windows 不会把这些窗口的输入交给普通程序。
 - 独占全屏的游戏会盖住信号层。
 - 只共享单个窗口时看不到信号，请改为共享整个屏幕。
-- 开启 lolPing 后，Ctrl + 拖动会打开表情轮盘，而不是复制文件或文字。可以在**设置 → 表情**中换一个表情键，或者把它关掉。
+- 开启 PingForAI 后，Ctrl + 拖动会打开表情轮盘，而不是复制文件或文字。可以在**设置 → 表情**中换一个表情键，或者把它关掉。
 - 在 Mac 上，登录窗口或密码提示等安全界面出现时无法打开轮盘；每次更新后需要重新允许辅助功能权限。
 
 ## 从源码构建
@@ -144,7 +147,7 @@ lolPing 在启动 10 秒后向 GitHub 检查一次新版本，之后每 6 小时
 需要 Node 22.12 或更新版本，以及：
 
 - **Windows：** Windows 11，以及安装了“使用 C++ 的桌面开发”工作负载的 Visual Studio 2022 或更新版本。
-- **macOS：** 装有 Xcode 命令行工具（`xcode-select --install`）的 Apple 芯片 Mac。请为运行 `npm run dev` 的程序（例如“终端”）开启辅助功能权限，输入助手才能读取输入。
+- **macOS：** 装有 Xcode 命令行工具（`xcode-select --install`）及兼容 Electron 运行时的 Intel 或 Apple 芯片 Mac。运行时需要辅助功能权限，截图援助还需要屏幕录制权限。
 
 ```bash
 npm install
@@ -169,6 +172,8 @@ npm run dev
 
 ### 发布新版本
 
+当前未启用自动发布。经过测试的模板保存在 [tools/github-workflows](tools/github-workflows)；需要具有工作流修改权限的凭据将其启用，之后才能按下面流程发布。
+
 修改 `package.json` 中的 `version` 并提交，然后推送对应的标签，例如 `v0.2.0`。Release 工作流会先把 GitHub Release 创建为草稿。Windows 任务附加安装程序、`latest.yml` 和安装程序的 `.blockmap`，Mac 任务附加磁盘映像。electron-updater 需要 `latest.yml` 和 `.blockmap` 两者才能更新已安装的程序。全部附加完成后，最后一个任务会发布这个 Release。
 
 ## 工作原理
@@ -189,4 +194,4 @@ npm run dev
 
 代码采用 [MIT 许可证](LICENSE)。信号和表情的图标、动画与音效版权归 Riot Games 所有，不在该许可证范围内。如果你代表 Riot Games 并希望移除相关内容，请提交 issue。
 
-lolPing isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.
+PingForAI isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.

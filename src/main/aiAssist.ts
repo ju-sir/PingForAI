@@ -39,6 +39,7 @@ function outputText(body: unknown): string | null {
 }
 
 export interface AiAssistOptions {
+  getConfig?: () => { apiKey: string; model: string; endpoint: string };
   apiKey?: string;
   model?: string;
   baseUrl?: string;
@@ -61,19 +62,20 @@ export class AiAssist {
     this.cooldownMs = opts.cooldownMs ?? 8_000;
   }
 
-  get configured(): boolean { return Boolean(this.opts.apiKey ?? process.env.AI_API_KEY ?? process.env.OPENAI_API_KEY); }
+  get configured(): boolean { return Boolean(this.opts.getConfig?.().apiKey ?? this.opts.apiKey ?? process.env.AI_API_KEY ?? process.env.OPENAI_API_KEY); }
 
   async explain(image: NativeImage, prompt: string): Promise<string | null> {
-    const apiKey = this.opts.apiKey ?? process.env.AI_API_KEY ?? process.env.OPENAI_API_KEY;
+    const opts = { ...this.opts, ...this.opts.getConfig?.() };
+    const apiKey = opts.apiKey ?? process.env.AI_API_KEY ?? process.env.OPENAI_API_KEY;
     if (!apiKey || this.now() - this.lastStarted < this.cooldownMs) return null;
     this.lastStarted = this.now();
     const imageUrl = `data:image/png;base64,${image.toPNG().toString('base64')}`;
     const baseUrl = (this.opts.baseUrl ?? process.env.AI_BASE_URL ?? 'https://api.openai.com').replace(/\/$/, '');
-    const endpoint = this.opts.endpoint ?? process.env.AI_CHAT_ENDPOINT ?? `${baseUrl}/v1/chat/completions`;
+    const endpoint = opts.endpoint ?? process.env.AI_CHAT_ENDPOINT ?? `${baseUrl}/v1/chat/completions`;
     const response = await this.fetch(endpoint, {
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify(buildVisionRequest(imageUrl, this.opts.model ?? process.env.AI_MODEL ?? 'gpt-4.1-mini', prompt)),
+      body: JSON.stringify(buildVisionRequest(imageUrl, opts.model ?? process.env.AI_MODEL ?? 'gpt-4.1-mini', prompt)),
       signal: AbortSignal.timeout(60_000),
     });
     if (!response.ok) throw new Error(`AI request failed (${response.status})`);

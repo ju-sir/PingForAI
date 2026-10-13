@@ -96,7 +96,7 @@ export function startPage(): void {
     }
     document.body.classList.add('capture');
     document.body.classList.toggle('scene-hung', hung);
-    (window as unknown as { lolpingDemo: object }).lolpingDemo = {
+    (window as unknown as { pingforaiDemo: object }).pingforaiDemo = {
       play: () => autoplay.play(hung ? HUNG_STROKES : DEMO_STROKES),
       pose: () => pose(stage, hung),
     };

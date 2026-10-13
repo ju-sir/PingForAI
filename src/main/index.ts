@@ -1,4 +1,4 @@
-import { app, clipboard, desktopCapturer, dialog, Menu, powerMonitor, screen, shell, systemPreferences } from 'electron';
+import { app, clipboard, desktopCapturer, dialog, ipcMain, Menu, powerMonitor, screen, shell, systemPreferences } from 'electron';
 import { randomBytes, randomInt } from 'node:crypto';
 import { userInfo } from 'node:os';
 import { join } from 'node:path';
@@ -19,7 +19,8 @@ import { RELAYS } from './relays';
 import { RelayTransport } from './relayTransport';
 import { OverlayManager, type AiAssistPing, type SharedEmote, type SharedPing } from './overlayManager';
 import { AiAssist, focusCropRect } from './aiAssist';
-import { assetPath, buildResourcePath, helperExePath, IS_MAC, PLATFORM, settingsDir } from './paths';
+import { AiConfigStore } from './aiConfigStore';
+import { assetPath, buildResourcePath, helperExePath, IS_MAC, PLATFORM, settingsDir, migrateLegacySettings } from './paths';
 import { deriveRoomKeys } from './roomCrypto';
 import { RoomManager, type RoomToast } from './roomManager';
 import { registerSettingsIpc } from './settingsIpc';
@@ -34,7 +35,7 @@ import { Updater } from './updater';
 const ACCESSIBILITY_PANE = 'x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility';
 
 registerAppScheme();
-app.setAppUserModelId('com.lolping.app');
+app.setAppUserModelId('com.pingforai.app');
 
 if (!app.requestSingleInstanceLock()) {
   app.quit();
@@ -54,11 +55,11 @@ function osUserName(): string {
 }
 
 /**
- * The relays to use. Development builds take a comma-separated LOLPING_RELAYS instead, so "no relay reachable" can
+ * The relays to use. Development builds take a comma-separated PINGFORAI_RELAYS instead, so "no relay reachable" can
  * be tried without touching the firewall; packaged builds always use the pinned list.
  */
 function relayUrls(): readonly string[] {
-  const custom = app.isPackaged ? undefined : process.env.LOLPING_RELAYS;
+  const custom = app.isPackaged ? undefined : process.env.PINGFORAI_RELAYS;
   const urls = custom?.split(',').map((u) => u.trim()).filter((u) => u.startsWith('wss://')) ?? [];
   return urls.length > 0 ? urls : RELAYS;
 }
@@ -69,6 +70,7 @@ function setMacMenu(): void {
 }
 
 function start(): void {
+  migrateLegacySettings();
   const library = new EmoteLibrary(join(settingsDir(), 'emotes'));
   serveAppScheme({
     rendererRoot: process.env.ELECTRON_RENDERER_URL ? null : join(__dirname, '../renderer'), // development pages come from Vite
@@ -91,11 +93,21 @@ function start(): void {
 
   const overlays = new OverlayManager(overlaySettings(settings), (ref, remote) => resolveEmoteArt(ref, settings.customEmotes, remote));
   overlays.start();
-  const aiAssist = new AiAssist();
+  const aiConfig = new AiConfigStore(settingsDir());
+  const aiAssist = new AiAssist({ getConfig: () => aiConfig.runtime() });
+  ipcMain.handle(SETTINGS_CH.aiGet, (event) => {
+    if (event.sender !== settingsWindow()?.webContents || event.senderFrame?.routingId !== event.sender.mainFrame.routingId || event.senderFrame?.processId !== event.sender.mainFrame.processId) throw new Error('Unauthorized');
+    return aiConfig.publicConfig();
+  });
+  ipcMain.handle(SETTINGS_CH.aiSave, (event, raw: unknown) => {
+    if (event.sender !== settingsWindow()?.webContents || event.senderFrame?.routingId !== event.sender.mainFrame.routingId || event.senderFrame?.processId !== event.sender.mainFrame.processId) throw new Error('Unauthorized');
+    try { return { ok: true, config: aiConfig.save(raw) }; }
+    catch (error) { return { ok: false, error: error instanceof Error && error.message === 'invalid' ? 'invalid' : 'storage' }; }
+  });
   const bridge = new InputBridge({ command: helperExePath() });
 
-  // Updates: only in an installed build, or in a development build pointed at a test server with LOLPING_UPDATE_TEST_URL.
-  const testUrl = process.env.LOLPING_UPDATE_TEST_URL || undefined;
+  // Updates: only in an installed build, or in a development build pointed at a test server with PINGFORAI_UPDATE_TEST_URL.
+  const testUrl = process.env.PINGFORAI_UPDATE_TEST_URL || undefined;
   const updater = app.isPackaged || testUrl ? createUpdater() : null;
   function createUpdater(): Updater {
     const backend = IS_MAC
@@ -129,7 +141,7 @@ function start(): void {
     });
   }
 
-  // Room: pings shared with other lolPing users, on the network and through public relays.
+  // Room: pings shared with other PingForAI users, on the network and through public relays.
   const lan = new LanTransport();
   const relay = new RelayTransport({ urls: relayUrls() });
   const room = new RoomManager({
@@ -165,7 +177,7 @@ function start(): void {
   };
 
   // macOS Accessibility. Without it the helper can't create its event tap, so it isn't started: a timer waits for
-  // the permission instead. `staleAccess`: macOS lists lolPing as allowed, yet the helper still has no access.
+  // the permission instead. `staleAccess`: macOS lists PingForAI as allowed, yet the helper still has no access.
   let accessTimer: NodeJS.Timeout | null = null;
   let staleAccess = false;
   const trusted = (): boolean => !IS_MAC || systemPreferences.isTrustedAccessibilityClient(false);
@@ -381,7 +393,7 @@ function start(): void {
       bridge.send({ type: 'suspend', on });
     },
     openAccessibility: () => {
-      systemPreferences.isTrustedAccessibilityClient(true); // adds lolPing to the list and shows the system prompt
+      systemPreferences.isTrustedAccessibilityClient(true); // adds PingForAI to the list and shows the system prompt
       void shell.openExternal(ACCESSIBILITY_PANE);
       if (!trusted()) waitForAccess();
     },

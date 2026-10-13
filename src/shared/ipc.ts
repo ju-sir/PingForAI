@@ -5,6 +5,7 @@ import type { HelperStatus, WheelKind } from './protocol';
 import type { JoinResult, RoomState } from './room';
 import type { OverlaySettings, Settings } from './settings';
 import type { UpdateState } from './update';
+import type { AiConnectionConfig, AiConnectionPatch, AiConfigResult } from './aiConfig';
 
 export interface Point {
   x: number;
@@ -51,7 +52,7 @@ export interface AppStatus {
   enabled: boolean;
   helper: HelperStatus;
   /**
-   * macOS only: lolPing is in the Accessibility list but the helper still can't read input. That is a stale entry
+   * macOS only: PingForAI is in the Accessibility list but the helper still can't read input. That is a stale entry
    * left by an update (ad-hoc signatures change every build): it has to be removed and added again.
    */
   staleAccess?: boolean;
@@ -71,6 +72,8 @@ export { SETTINGS_CH } from './settingsChannels';
 
 /** window.settingsApi in the settings renderer. */
 export interface SettingsApi {
+  getAiConfig(): Promise<AiConnectionConfig>;
+  saveAiConfig(patch: AiConnectionPatch): Promise<AiConfigResult>;
   readonly platform: Platform;
   getSettings(): Promise<Settings>;
   setSettings(patch: Partial<Settings>): Promise<SetSettingsResult>;

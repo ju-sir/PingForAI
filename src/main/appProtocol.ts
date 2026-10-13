@@ -4,12 +4,12 @@ import { isFile } from './fileState';
 import { resolveInside } from './safePath';
 
 /**
- * lolping://app/... serves the production pages, so fetch() works for sounds (file:// would block it), and
- * lolping://emotes/... serves imported emotes from the data folder, in development too.
+ * pingforai://app/... serves the production pages, so fetch() works for sounds (file:// would block it), and
+ * pingforai://emotes/... serves imported emotes from the data folder, in development too.
  */
-export const APP_SCHEME = 'lolping';
+export const APP_SCHEME = 'pingforai';
 
-/** The only names lolping://emotes serves: a hash and `.webp` (the still) or `.anim` (the animation). */
+/** The only names pingforai://emotes serves: a hash and `.webp` (the still) or `.anim` (the animation). */
 export const EMOTE_URL_RE = /^\/([0-9a-f]{32})\.(webp|anim)$/;
 
 /** Must run before app 'ready'. */
@@ -20,7 +20,7 @@ export function registerAppScheme(): void {
 }
 
 /**
- * The file behind a lolping://emotes path, from the first of `dirs` that has it. `.anim` is the `.anim.gif` or `.anim.webp`
+ * The file behind a pingforai://emotes path, from the first of `dirs` that has it. `.anim` is the `.anim.gif` or `.anim.webp`
  * on disk, or the still when the animation is missing. Null for any other path.
  */
 export function resolveEmoteFile(dirs: readonly string[], urlPath: string): string | null {

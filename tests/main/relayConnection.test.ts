@@ -22,7 +22,7 @@ const goLive = (): FakeSocket => {
   last().open();
   return last();
 };
-const echo = (): void => last().receive(['EVENT', 'lolping', ev(me)]);
+const echo = (): void => last().receive(['EVENT', 'pingforai', ev(me)]);
 const published = (s: FakeSocket): unknown[][] => s.messages().filter((m) => m[0] === 'EVENT');
 
 beforeEach(() => {
@@ -50,7 +50,7 @@ describe('RelayConnection', () => {
     conn.on('live', live);
     expect(conn.state).toBe('connecting');
     const s = goLive();
-    expect(s.messages()[0]).toEqual(['REQ', 'lolping', { kinds: [24747], '#x': [TOPIC], since: NOW / 1000 - 600, limit: 0 }]);
+    expect(s.messages()[0]).toEqual(['REQ', 'pingforai', { kinds: [24747], '#x': [TOPIC], since: NOW / 1000 - 600, limit: 0 }]);
     expect(conn.state).toBe('live');
     expect(live).toHaveBeenCalledTimes(1);
   });
@@ -65,11 +65,11 @@ describe('RelayConnection', () => {
   it("separates echoes from other members' events, and ignores other subscriptions, kinds and topics", () => {
     const s = goLive();
     const theirs = ev();
-    s.receive(['EVENT', 'lolping', theirs]);
+    s.receive(['EVENT', 'pingforai', theirs]);
     echo();
     s.receive(['EVENT', 'other-sub', ev()]);
-    s.receive(['EVENT', 'lolping', ev(other, 1)]);
-    s.receive(['EVENT', 'lolping', ev(other, 24747, 'cd'.repeat(32))]);
+    s.receive(['EVENT', 'pingforai', ev(other, 1)]);
+    s.receive(['EVENT', 'pingforai', ev(other, 24747, 'cd'.repeat(32))]);
     s.receive('["NOTICE","hi"]');
     s.receive('garbage');
     expect(events).toEqual([theirs]);
@@ -170,10 +170,10 @@ describe('RelayConnection', () => {
 
   it('resubscribes after one CLOSED and retires after a second', () => {
     const s = goLive();
-    s.receive(['CLOSED', 'lolping', 'error: restarting']);
+    s.receive(['CLOSED', 'pingforai', 'error: restarting']);
     expect(s.messages().filter((m) => m[0] === 'REQ')).toHaveLength(2);
     expect(conn.state).toBe('live');
-    s.receive(['CLOSED', 'lolping', 'error: restarting']);
+    s.receive(['CLOSED', 'pingforai', 'error: restarting']);
     expect(conn.state).toBe('retired');
   });
 
@@ -225,7 +225,7 @@ describe('RelayConnection', () => {
     const before = states.length;
     conn.stop();
     expect(s.closed).toBe(true);
-    s.receive(['EVENT', 'lolping', ev()]);
+    s.receive(['EVENT', 'pingforai', ev()]);
     s.onclose?.();
     vi.advanceTimersByTime(600_000);
     expect(events).toEqual([]);

@@ -250,7 +250,7 @@ Nothing in §3–§5 is built until the probe passes.
 | `roomRetry` | Retry | 重试 |
 | `roomLonelyInternetOff` | Friends on another network? Turn on Allow internet connections. | 朋友在其他网络？请打开“允许互联网连接”。 |
 | `roomPrivacy` (replaced) | Pings and names are end-to-end encrypted. People on your network can see your local IP address. With internet connections on, public relays see your IP address, an anonymous room ID and when you send, but never your pings or your name. | 信号和名字均为端到端加密。同一网络中的人可以看到你的本地 IP 地址。开启互联网连接后，公共中继可以看到你的 IP 地址、匿名房间 ID 和发送时间，但永远看不到你的信号和名字。 |
-| `roomHelp` (replaced) | Can't see a friend? Check that you both typed the same code. On the same network, lolPing must be allowed through the firewall; on different networks, you both need Allow internet connections on. | 看不到朋友？请确认你们输入的是同一个房间码。在同一网络中，需要允许 lolPing 通过防火墙；在不同网络中，双方都需要打开“允许互联网连接”。 |
+| `roomHelp` (replaced) | Can't see a friend? Check that you both typed the same code. On the same network, PingForAI must be allowed through the firewall; on different networks, you both need Allow internet connections on. | 看不到朋友？请确认你们输入的是同一个房间码。在同一网络中，需要允许 PingForAI 通过防火墙；在不同网络中，双方都需要打开“允许互联网连接”。 |
 
 ### 8.3 Platform
 
@@ -321,7 +321,7 @@ Relays need only outgoing encrypted WebSocket connections. That means no Windows
 **Tools**
 - `tools/relay-probe`: the gate (§6).
 - `tools/room-peer --relay`: joins a room through the real pinned relays only, so one PC can test the app end to end over the internet path (badge `Internet`).
-- Development builds read `LOLPING_RELAYS`, a comma-separated list of `wss://` URLs, in place of the pinned list. That lets the "Internet unavailable" state and Retry be tested without touching the firewall. Packaged builds ignore it.
+- Development builds read `PINGFORAI_RELAYS`, a comma-separated list of `wss://` URLs, in place of the pinned list. That lets the "Internet unavailable" state and Retry be tested without touching the firewall. Packaged builds ignore it.
 
 **Manual checklist** (run before release; recorded in the checklist file):
 1. Windows ↔ Windows on different networks (one on a phone hotspot): join, pings both ways, `Internet` badge, name tags, how fast pings feel.

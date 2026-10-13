@@ -43,12 +43,12 @@ describe('events', () => {
   });
 
   it('builds the messages sent to relays', () => {
-    expect(JSON.parse(reqMessage('lolping', 'ab', 1700000000))).toEqual(
-      ['REQ', 'lolping', { kinds: [24747], '#x': ['ab'], since: 1700000000, limit: 0 }],
+    expect(JSON.parse(reqMessage('pingforai', 'ab', 1700000000))).toEqual(
+      ['REQ', 'pingforai', { kinds: [24747], '#x': ['ab'], since: 1700000000, limit: 0 }],
     );
     const e = signEvent(makeKeyPair(), 24747, [], 'c', 1);
     expect(JSON.parse(eventMessage(e))).toEqual(['EVENT', e]);
-    expect(JSON.parse(closeMessage('lolping'))).toEqual(['CLOSE', 'lolping']);
+    expect(JSON.parse(closeMessage('pingforai'))).toEqual(['CLOSE', 'pingforai']);
   });
 });
 

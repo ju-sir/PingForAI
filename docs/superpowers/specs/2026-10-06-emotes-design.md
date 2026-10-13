@@ -23,7 +23,7 @@ A League-style **emote wheel**: hold a second key, drag, let go on an emote, and
 |---|---|
 | What an emote is | League's emote wheel: 8 slices plus a centre emote, the same shape as the ping wheel. |
 | Opening it | Its own trigger, `emoteTrigger`, with the same choices as the ping trigger plus **Off**. Default **Ctrl** on both platforms. Trigger + click places the centre emote, off by default. |
-| Ctrl + drag | Taken over while lolPing is on. The README says so and points to the setting. Ctrl + click without a drag still reaches apps (the helper replays it). |
+| Ctrl + drag | Taken over while PingForAI is on. The README says so and points to the setting. Ctrl + click without a drag still reaches apps (the helper replays it). |
 | Bundled set | About 32 curated League emotes, picked by the user from a gallery of baked candidates. |
 | Bundled animation | League emotes are particle effects (one effect file per emote driving `_vfx`, `_glow` and shared erode/bubble textures). The extract tool **bakes** each curated emote's effect into a 3 s animated WebP. The app only plays images. |
 | Bundled sound | Each curated emote ships its League sound (`Play_sfx_Emotes_<id>`) as Opus in `.ogg`. |
@@ -44,7 +44,7 @@ main process
  ├─ EmoteCache       (M2) received stills, LRU
  ├─ RoomManager           emote messages; (M2) presence `em`, want/chunk via EmoteTransfer
  │   └─ EmoteTransfer (M2) sender queue + receiver assembler, pure logic
- └─ appProtocol           lolping://emotes/… serves EmoteLibrary and EmoteCache files
+ └─ appProtocol           pingforai://emotes/… serves EmoteLibrary and EmoteCache files
 overlay renderer          two Wheel instances; emoteFx plays emotes
 settings renderer         Emotes section; emoteImport turns a file into still + animation
 tools/extract-assets      --emotes: reads League data, bakes animations, extracts sounds
@@ -77,7 +77,7 @@ tools/extract-assets      --emotes: reads League data, bakes animations, extract
 | `src/main/roomManager.ts` | `sendEmote`, receive path for emotes; (M2) EmoteTransfer wiring and the low-priority relay budget. |
 | `src/main/appProtocol.ts` | An `emotes` host for custom files, registered in dev and production. |
 | `src/renderer/overlay/wheel.ts` | Generic over its items: `WheelItem { key: string; icon: string }` plus a centre label (`PING` / `EMOTE`). |
-| `src/renderer/overlay/index.html` | CSP: `img-src 'self' data: blob: lolping://emotes; connect-src 'self' lolping://emotes`. |
+| `src/renderer/overlay/index.html` | CSP: `img-src 'self' data: blob: pingforai://emotes; connect-src 'self' pingforai://emotes`. |
 | `src/renderer/overlay/soundBank.ts` | Loads by URL as well as by name, so it can play `assets/emotes/<slug>.ogg`. |
 | `src/renderer/settings/components/WheelEditor.tsx` | Generic over its items, so the Emotes section reuses it. |
 | `src/shared/i18n.ts` | New strings (§10.2), English and 简体中文. |
@@ -158,7 +158,7 @@ Expected size: 150–300 KB per animation, a few KB per icon and sound, 5–10 M
 
 **Storage** (EmoteLibrary): `<settings folder>/emotes/<hash>.webp` and `<hash>.anim.gif|webp`. Both are written to temp names first, then renamed. A failure removes both, and the `customEmotes` entry is added only after both renames succeed.
 
-**Serving:** `lolping://emotes/<hash>.webp` (the still) and `lolping://emotes/<hash>.anim` (the animation: `.anim.gif` or `.anim.webp` on disk, falling back to the still if neither exists) resolve with `resolveInside`, first in `emotes/` and then (M2) in `emote-cache/`. No other names are served.
+**Serving:** `pingforai://emotes/<hash>.webp` (the still) and `pingforai://emotes/<hash>.anim` (the animation: `.anim.gif` or `.anim.webp` on disk, falling back to the still if neither exists) resolve with `resolveInside`, first in `emotes/` and then (M2) in `emote-cache/`. No other names are served.
 
 **Removing** deletes the files and the entry. Wheel slots using it fall back as in §7.1.
 
@@ -278,7 +278,7 @@ A new **Emotes** section between **Wheel** and **Room**, with a nav entry:
 - **Use:** a row for the emote wheel.
 - **Settings:** the Emotes settings.
 - **Rooms:** emotes and own images.
-- **Known limitations:** "While lolPing is on, Ctrl + drag opens the emote wheel instead of copying files or text. Pick another emote key, or turn it off, in Settings → Emotes."
+- **Known limitations:** "While PingForAI is on, Ctrl + drag opens the emote wheel instead of copying files or text. Pick another emote key, or turn it off, in Settings → Emotes."
 - **Ping assets:** emotes are © Riot Games too.
 
 ## 11. Failure handling
@@ -341,7 +341,7 @@ A new **Emotes** section between **Wheel** and **Room**, with a nav entry:
 3. Helper second trigger.
 4. Settings fields, IPC, generic `Wheel` and `WheelEditor`, Emotes section.
 5. emoteFx and the overlay's second wheel.
-6. EmoteLibrary, emoteImport, `lolping://emotes`.
+6. EmoteLibrary, emoteImport, `pingforai://emotes`.
 7. Room `emote` messages, placeholder, old-peer note.
 8. README and README.zh-CN; version bump. Released together with the update checker.
 

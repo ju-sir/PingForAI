@@ -19,8 +19,8 @@ const ev = (keys = other, content = 'AAAA'): NostrEvent => signEvent(keys, 24747
 /** The newest socket for a relay. */
 const sock = (url: string): FakeSocket => sockets.filter((s) => s.url === url).at(-1)!;
 const openAll = (): void => URLS.forEach((u) => sock(u).open());
-const echoFrom = (url: string, e = ev(me)): void => sock(url).receive(['EVENT', 'lolping', e]);
-const from = (url: string, e: NostrEvent): void => sock(url).receive(['EVENT', 'lolping', e]);
+const echoFrom = (url: string, e = ev(me)): void => sock(url).receive(['EVENT', 'pingforai', e]);
+const from = (url: string, e: NostrEvent): void => sock(url).receive(['EVENT', 'pingforai', e]);
 
 beforeEach(() => {
   vi.useFakeTimers({ now: 1_780_000_000_000 });

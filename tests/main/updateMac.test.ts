@@ -10,9 +10,9 @@ import fixture from './fixtures/github-release-latest.json';
 const PAYLOAD = Buffer.alloc(65536, 7);
 const PAYLOAD_SHA = createHash('sha256').update(PAYLOAD).digest('hex');
 const LATEST_URL = `${RELEASES_API}/releases/latest`;
-const DMG_NAME = 'lolPing-0.5.1-arm64.dmg';
-const DMG_URL = `https://github.com/darrenprx/lolPing/releases/download/v0.5.1/${DMG_NAME}`;
-const NOTES_URL = 'https://github.com/darrenprx/lolPing/releases/tag/v0.5.1';
+const DMG_NAME = 'PingForAI-0.5.1-arm64.dmg';
+const DMG_URL = `https://github.com/ju-sir/PingForAI/releases/download/v0.5.1/${DMG_NAME}`;
+const NOTES_URL = 'https://github.com/ju-sir/PingForAI/releases/tag/v0.5.1';
 
 type Release = typeof fixture;
 const release = (edit: (r: Release) => void = () => undefined): Release => {
@@ -65,7 +65,7 @@ function make(over: Partial<MacBackendDeps> = {}): { backend: MacBackend; deps: 
     focus: vi.fn(),
     showDialog: vi.fn(async () => undefined),
     openPath: vi.fn(async () => ''),
-    dialogText: () => 'Drag lolPing into Applications.',
+    dialogText: () => 'Drag PingForAI into Applications.',
     quit: vi.fn(),
     ...over,
   };
@@ -84,7 +84,7 @@ const files = (): string[] => fs.readdirSync(dir).sort();
 const noAbort = (): AbortSignal => new AbortController().signal;
 
 beforeEach(() => {
-  dir = fs.mkdtempSync(path.join(os.tmpdir(), 'lolping-mac-'));
+  dir = fs.mkdtempSync(path.join(os.tmpdir(), 'pingforai-mac-'));
   calls = [];
 });
 
@@ -105,7 +105,7 @@ describe('MacBackend.check', () => {
     expect(calls).toHaveLength(1);
     expect(calls[0].url).toBe(LATEST_URL);
     const headers = new Headers(calls[0].init?.headers);
-    expect(headers.get('user-agent')).toBe('lolPing/0.5.0');
+    expect(headers.get('user-agent')).toBe('PingForAI/0.5.0');
     expect(headers.get('accept')).toBe('application/vnd.github+json');
     expect(calls[0].init?.signal).toBeInstanceOf(AbortSignal);
   });
@@ -136,9 +136,9 @@ describe('MacBackend.check', () => {
   it('says there is no update when the release has no disk image for this version', async () => {
     const without = release((r) => (r.assets = r.assets.filter((a) => !a.name.endsWith('.dmg'))));
     expect(await make({ fetch: serve(without) }).backend.check()).toBeNull();
-    const wrongVersion = release((r) => (dmgAsset(r).name = 'lolPing-0.5.0-arm64.dmg'));
+    const wrongVersion = release((r) => (dmgAsset(r).name = 'PingForAI-0.5.0-arm64.dmg'));
     expect(await make({ fetch: serve(wrongVersion) }).backend.check()).toBeNull();
-    const intel = release((r) => (dmgAsset(r).name = 'lolPing-0.5.1-x64.dmg'));
+    const intel = release((r) => (dmgAsset(r).name = 'PingForAI-0.5.1-x64.dmg'));
     expect(await make({ fetch: serve(intel) }).backend.check()).toBeNull();
   });
 
@@ -227,7 +227,7 @@ describe('MacBackend.download', () => {
     const ac = new AbortController();
     await backend.download(info, () => undefined, ac.signal);
     const call = calls.find((c) => c.url === DMG_URL)!;
-    expect(new Headers(call.init?.headers).get('user-agent')).toBe('lolPing/0.5.0');
+    expect(new Headers(call.init?.headers).get('user-agent')).toBe('PingForAI/0.5.0');
     expect(call.init?.signal).toBe(ac.signal);
   });
 
@@ -471,7 +471,7 @@ describe('MacBackend.install', () => {
       }),
     });
     await backend.install({ version: '0.5.1', notesUrl: NOTES_URL });
-    expect(order).toEqual(['focus', 'dialog Drag lolPing into Applications.', `open ${DMG_NAME}`, 'quit']);
+    expect(order).toEqual(['focus', 'dialog Drag PingForAI into Applications.', `open ${DMG_NAME}`, 'quit']);
     expect(deps.openPath).toHaveBeenCalledWith(path.join(dir, DMG_NAME));
     expect(deps.showDialog).toHaveBeenCalledWith(deps.dialogText());
   });

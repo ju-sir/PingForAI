@@ -1,6 +1,6 @@
 # relay-probe
 
-Checks which public Nostr relays can carry lolPing's internet rooms. It decides the pinned list in `src/main/relays.ts`.
+Checks which public Nostr relays can carry PingForAI's internet rooms. It decides the pinned list in `src/main/relays.ts`.
 
 ```bash
 node tools/relay-probe/run.mjs                          # all candidates, burst 5/s, 10 min soak
@@ -29,4 +29,4 @@ A relay passes when it:
 - Each relay gets a throwaway key and a random topic. The content is random bytes the size of a real room packet.
 - Like any website, each relay sees this machine's IP address.
 
-**Output:** a table on the console. The full report goes to `<temp>/lolping-relay-probe.json`.
+**Output:** a table on the console. The full report goes to `<temp>/pingforai-relay-probe.json`.

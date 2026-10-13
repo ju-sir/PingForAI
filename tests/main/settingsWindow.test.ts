@@ -42,7 +42,7 @@ vi.mock('../../src/main/paths', () => ({
   IS_MAC: false,
   assetPath: () => 'icon.png',
   loadPage: () => Promise.resolve(),
-  pageUrl: () => 'lolping://app/settings/index.html',
+  pageUrl: () => 'pingforai://app/settings/index.html',
   preloadPath: () => 'preload.js',
 }));
 
@@ -100,8 +100,8 @@ describe('navigation', () => {
     mod.openSettingsWindow();
     for (const url of [
       'https://example.com/', 'http://localhost:5173/settings/index.html', 'file:///C:/Users/me/Pictures/cat.png',
-      'lolping://app/overlay/index.html', 'lolping://app/settings/other.html', 'lolping://emotes/0123456789abcdef0123456789abcdef.webp',
-      'lolping://other/settings/index.html', 'about:blank', 'javascript:alert(1)', 'data:text/html,<h1>hi</h1>', 'blob:null/1234', 'not a url', '',
+      'pingforai://app/overlay/index.html', 'pingforai://app/settings/other.html', 'pingforai://emotes/0123456789abcdef0123456789abcdef.webp',
+      'pingforai://other/settings/index.html', 'about:blank', 'javascript:alert(1)', 'data:text/html,<h1>hi</h1>', 'blob:null/1234', 'not a url', '',
     ]) {
       expect(blocked(url), url).toBe(true);
     }
@@ -109,7 +109,7 @@ describe('navigation', () => {
 
   it('lets the page reload itself, whatever follows its address', () => {
     mod.openSettingsWindow();
-    for (const url of ['lolping://app/settings/index.html', 'lolping://app/settings/index.html#room', 'lolping://app/settings/index.html?x=1']) {
+    for (const url of ['pingforai://app/settings/index.html', 'pingforai://app/settings/index.html#room', 'pingforai://app/settings/index.html?x=1']) {
       expect(blocked(url), url).toBe(false);
     }
   });
@@ -118,7 +118,7 @@ describe('navigation', () => {
     mod.openSettingsWindow();
     const { openHandler } = (windows[0] as FakeWindow).webContents;
     expect(openHandler).not.toBeNull();
-    for (const url of ['https://example.com/', 'lolping://app/settings/index.html', 'file:///C:/x.html', '']) {
+    for (const url of ['https://example.com/', 'pingforai://app/settings/index.html', 'file:///C:/x.html', '']) {
       expect(openHandler?.({ url }), url).toEqual({ action: 'deny' });
     }
   });

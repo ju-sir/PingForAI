@@ -18,8 +18,8 @@ const { values, positionals } = parseArgs({
     name: { type: 'string', default: 'Bot' },
     color: { type: 'string', default: '4' },
     rate: { type: 'string', default: '1' }, // pings per second; 0 = only listen
-    host: { type: 'string', default: '127.0.0.1' }, // where lolPing runs
-    port: { type: 'string', default: '47475' }, // this peer's own port (lolPing itself uses 47474)
+    host: { type: 'string', default: '127.0.0.1' }, // where PingForAI runs
+    port: { type: 'string', default: '47475' }, // this peer's own port (PingForAI itself uses 47474)
     display: { type: 'string', default: '1' },
     relay: { type: 'boolean', default: false }, // through the public relays instead of the LAN
     emotes: { type: 'boolean', default: false }, // also send emotes, alternating with the pings

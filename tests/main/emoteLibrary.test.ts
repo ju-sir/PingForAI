@@ -51,7 +51,7 @@ const stillExtended = (flags: number, w = 160, h = 120, total = 600): Uint8Array
 const png = (): Uint8Array => padded([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a], 300);
 
 const hashOf = (b: Uint8Array): string => createHash('sha256').update(b).digest('hex').slice(0, 32);
-const tempDir = (): string => mkdtempSync(join(tmpdir(), 'lolping-emotes-'));
+const tempDir = (): string => mkdtempSync(join(tmpdir(), 'pingforai-emotes-'));
 const files = (dir: string): string[] => (existsSync(dir) ? readdirSync(dir).sort() : []);
 const entry = (n: number): CustomEmote => ({ id: `c:${n.toString(16).padStart(32, '0')}`, name: `e${n}`, animated: false });
 
@@ -209,9 +209,9 @@ describe('resolveEmoteArt', () => {
   const plain: CustomEmote = { id: `c:${'cd'.repeat(16)}`, name: 'p', animated: false };
 
   it('plays our own animation, but shows a room member’s emote as its still', () => {
-    expect(resolveEmoteArt(moving.id, [moving], false)).toEqual({ kind: 'custom', url: `lolping://emotes/${hash}.anim`, animated: true });
-    expect(resolveEmoteArt(moving.id, [moving], true)).toEqual({ kind: 'custom', url: `lolping://emotes/${hash}.webp`, animated: false });
-    expect(resolveEmoteArt(plain.id, [plain], false)).toEqual({ kind: 'custom', url: `lolping://emotes/${'cd'.repeat(16)}.webp`, animated: false });
+    expect(resolveEmoteArt(moving.id, [moving], false)).toEqual({ kind: 'custom', url: `pingforai://emotes/${hash}.anim`, animated: true });
+    expect(resolveEmoteArt(moving.id, [moving], true)).toEqual({ kind: 'custom', url: `pingforai://emotes/${hash}.webp`, animated: false });
+    expect(resolveEmoteArt(plain.id, [plain], false)).toEqual({ kind: 'custom', url: `pingforai://emotes/${'cd'.repeat(16)}.webp`, animated: false });
   });
 
   it('resolves bundled emotes and stands a placeholder in for unknown ones', () => {
