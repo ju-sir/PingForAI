@@ -5,6 +5,9 @@ release/
 site-dist/
 native/hook-helper/build/
 *.log
+.env
+.env.*
+!.env.example
 .DS_Store
 tools/extract-assets/.cache/
 tools/extract-assets/__pycache__/

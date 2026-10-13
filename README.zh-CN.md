@@ -82,6 +82,10 @@ Mac 版需要 Apple 芯片（M1 或更新）的 Mac 和 macOS 12 或更新版本
 
 ### AI 援助（实验性）
 
+本地开发运行 `npm run dev` 或构建后运行 `npm start` 时，会自动读取项目根目录的 `.env`。DeepSeek 的读图配置参考 `.env.example`：`AI_MODEL=deepseek-flash`，`AI_CHAT_ENDPOINT=https://api.deepseek.com/chat/completions`。`AI_CHAT_ENDPOINT` 可指定完整读图接口地址；留空时使用 `AI_BASE_URL` 下的 `/v1/chat/completions`。生图接口 `/images/generations` 用于生成图片，读图需使用支持视觉输入的聊天模型。
+
+macOS 12 本地开发需使用兼容的 Electron 运行时（已验证 Electron 37.10.3），并在 `.env` 中设置 `ELECTRON_EXEC_PATH` 为其可执行文件的绝对路径；默认 Electron 44 无法在 macOS 12 启动。原生输入助手同时构建 Intel 和 Apple 芯片版本。首次使用需为运行时开启辅助功能和屏幕录制权限。
+
 在设置 → AI 援助中，可以为每个信号单独选择动作（关闭、解释并显示、复制答案、显示并复制）和提示词。触发对应信号时，lolPing 会截取信号附近的屏幕内容，并将截图与该信号的提示词发送给视觉模型。
 
 截图不会发送给房间成员，也不会写入磁盘。API Key 只从环境变量读取，不会保存到设置文件；未配置时 AI 动作自动跳过。截图默认取信号周围 640×480 像素，并限制每 8 秒最多请求一次。
@@ -94,6 +98,8 @@ AI_BASE_URL=https://llm.asiainfo-sec.com \
 AI_MODEL=你的视觉模型 \
 npm run dev
 ```
+
+也可以复制 `.env.example` 为 `.env`，填入自己的 Key；`.env` 已加入 Git 忽略，不会上传。
 
 注意：`/v1/images/generations` 是生图接口，不能直接读取截图；程序调用的是同一服务的 `/v1/chat/completions` 多模态接口。如果该服务没有提供这个接口，需要让服务商开启视觉对话模型，或换成支持图片输入的模型。
 

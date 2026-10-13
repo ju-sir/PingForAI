@@ -108,6 +108,8 @@ describe('OverlayManager emote clicks', () => {
   it('still drops the click ping for a ping click', () => {
     const emoted = vi.fn();
     const pinged = vi.fn();
+    const assist = vi.fn();
+    mgr.on('aiAssist', assist);
     mgr.on('sharedEmote', emoted);
     mgr.on('shared', pinged);
     mgr.handle({ type: 'click', x: 50, y: 60, wheel: 'ping' });
@@ -115,6 +117,7 @@ describe('OverlayManager emote clicks', () => {
     expect(sent(1)).toEqual([]);
     expect(emoted).not.toHaveBeenCalled();
     expect(pinged).toHaveBeenCalledOnce();
+    expect(assist).toHaveBeenCalledWith({ id: DEFAULT_SETTINGS.clickPingId, displayId: 1, x: 50, y: 60 });
   });
 });
 
@@ -146,9 +149,12 @@ describe('OverlayManager emote reports from the overlay', () => {
 
   it('still shares pings', () => {
     const shared = vi.fn();
+    const assist = vi.fn();
+    mgr.on('aiAssist', assist);
     mgr.on('shared', shared);
     h.handlers.get(OVERLAY_PINGED)!({ sender: sender(0) }, { id: 'danger', x: 1, y: 2 });
     expect(shared).toHaveBeenCalledWith({ id: 'danger', displayId: 1, x: 1, y: 2 });
+    expect(assist).toHaveBeenCalledWith({ id: 'danger', displayId: 1, x: 1, y: 2 });
   });
 });
 

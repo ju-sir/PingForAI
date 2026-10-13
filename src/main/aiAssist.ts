@@ -1,11 +1,8 @@
 import type { NativeImage } from 'electron';
-import type { PingId } from '../shared/pings';
 
 export interface Size { width: number; height: number }
 export interface Point { x: number; y: number }
 export interface CropRect { x: number; y: number; width: number; height: number }
-
-export const isAiAssistPing = (id: PingId): boolean => id === 'missing';
 
 /** Returns a crop centered on the marker and clamped to the captured display. */
 export function focusCropRect(display: Size, marker: Point, width: number, height: number): CropRect {
@@ -45,6 +42,7 @@ export interface AiAssistOptions {
   apiKey?: string;
   model?: string;
   baseUrl?: string;
+  endpoint?: string;
   fetch?: typeof globalThis.fetch;
   now?: () => number;
   cooldownMs?: number;
@@ -71,10 +69,12 @@ export class AiAssist {
     this.lastStarted = this.now();
     const imageUrl = `data:image/png;base64,${image.toPNG().toString('base64')}`;
     const baseUrl = (this.opts.baseUrl ?? process.env.AI_BASE_URL ?? 'https://api.openai.com').replace(/\/$/, '');
-    const response = await this.fetch(`${baseUrl}/v1/chat/completions`, {
+    const endpoint = this.opts.endpoint ?? process.env.AI_CHAT_ENDPOINT ?? `${baseUrl}/v1/chat/completions`;
+    const response = await this.fetch(endpoint, {
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify(buildVisionRequest(imageUrl, this.opts.model ?? process.env.AI_MODEL ?? 'gpt-4.1-mini', prompt)),
+      signal: AbortSignal.timeout(60_000),
     });
     if (!response.ok) throw new Error(`AI request failed (${response.status})`);
     const body = await response.json() as { output_text?: unknown; choices?: Array<{ message?: { content?: unknown } }> };

@@ -66,7 +66,7 @@ export class OverlayManager extends EventEmitter {
       if (displayId !== undefined) {
         const ping = { id: p.id, displayId, x: p.x, y: p.y } satisfies SharedPing;
         this.emit('shared', ping);
-        if (p.id === 'missing') this.emit('aiAssist', ping satisfies AiAssistPing);
+        this.emit('aiAssist', ping satisfies AiAssistPing);
       }
     });
     ipcMain.on(OVERLAY_EMOTED, (event, raw: unknown) => {
@@ -120,6 +120,7 @@ export class OverlayManager extends EventEmitter {
         }
         this.send(p.displayId, 'ping:spawn', { id: this.settings.clickPingId, x: p.x, y: p.y });
         this.emit('shared', { id: this.settings.clickPingId, displayId: p.displayId, x: p.x, y: p.y } satisfies SharedPing);
+        this.emit('aiAssist', { id: this.settings.clickPingId, displayId: p.displayId, x: p.x, y: p.y } satisfies AiAssistPing);
         break;
       }
       case 'cancel':

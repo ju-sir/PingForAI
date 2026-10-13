@@ -156,12 +156,12 @@ function start(): void {
   };
   const clipboardCode = async (): Promise<string | null> => {
     // Strict: nobody typed this, so only an unmistakable code counts, never words that happen to pass the check.
-    const parsed = parseRoomCode(await clipboard.readText().catch(() => ''), { strict: true });
+    const parsed = parseRoomCode(await Promise.resolve().then(() => clipboard.readText()).catch(() => ''), { strict: true });
     return parsed.ok ? formatRoomCode(parsed.code) : null;
   };
   const copyRoomCode = (): void => {
     const code = room.state().code;
-    if (code) void clipboard.writeText(code).catch(() => undefined);
+    if (code) void Promise.resolve().then(() => clipboard.writeText(code)).catch(() => undefined);
   };
 
   // macOS Accessibility. Without it the helper can't create its event tap, so it isn't started: a timer waits for
@@ -267,13 +267,14 @@ function start(): void {
     const width = Math.max(1, Math.round(display.bounds.width * scale));
     const height = Math.max(1, Math.round(display.bounds.height * scale));
     const sources = await desktopCapturer.getSources({ types: ['screen'], thumbnailSize: { width, height } });
-    const source = sources.find((s) => s.display_id === String(display.id)) ?? sources[0];
+    const source = sources.find((s) => s.display_id === String(display.id));
     if (!source || source.thumbnail.isEmpty()) return;
     const image = source.thumbnail;
-    const crop = focusCropRect({ width: image.getSize().width, height: image.getSize().height }, { x: p.x * scale, y: p.y * scale }, 640, 480);
+    const size = image.getSize();
+    const crop = focusCropRect(size, { x: p.x * size.width / display.bounds.width, y: p.y * size.height / display.bounds.height }, 640, 480);
     const answer = await aiAssist.explain(image.crop(crop), prompt);
     if (!answer || quitting) return;
-    if (action === 'copy' || action === 'showAndCopy') await clipboard.writeText(answer).catch(() => undefined);
+    if (action === 'copy' || action === 'showAndCopy') await Promise.resolve().then(() => clipboard.writeText(answer)).catch(() => undefined);
     if (action === 'show' || action === 'showAndCopy') overlays.toast('AI 援助', answer);
   }
   room.on('remoteEmote', (p) => overlays.spawnRemoteEmote(p));
