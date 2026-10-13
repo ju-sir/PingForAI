@@ -19,6 +19,7 @@ import { RELAYS } from './relays';
 import { RelayTransport } from './relayTransport';
 import { OverlayManager, type AiAssistPing, type SharedEmote, type SharedPing } from './overlayManager';
 import { AiAssist, focusCropRect } from './aiAssist';
+import { showAiAnswer } from './aiAnswerWindow';
 import { AiConfigStore } from './aiConfigStore';
 import { assetPath, buildResourcePath, helperExePath, IS_MAC, PLATFORM, settingsDir, migrateLegacySettings } from './paths';
 import { deriveRoomKeys } from './roomCrypto';
@@ -283,11 +284,15 @@ function start(): void {
     if (!source || source.thumbnail.isEmpty()) return;
     const image = source.thumbnail;
     const size = image.getSize();
-    const crop = focusCropRect(size, { x: p.x * size.width / display.bounds.width, y: p.y * size.height / display.bounds.height }, 640, 480);
-    const answer = await aiAssist.explain(image.crop(crop), prompt);
+    const marker = { x: p.x * size.width / display.bounds.width, y: p.y * size.height / display.bounds.height };
+    const crop = focusCropRect(size, marker, 640, 480);
+    const background = size.width > 1280 ? image.resize({ width: 1280 }) : image;
+    const answer = await aiAssist.explain(image.crop(crop), prompt, {
+      imageUrl: background.toDataURL(), marker: { x: marker.x - crop.x, y: marker.y - crop.y },
+    });
     if (!answer || quitting) return;
     if (action === 'copy' || action === 'showAndCopy') await Promise.resolve().then(() => clipboard.writeText(answer)).catch(() => undefined);
-    if (action === 'show' || action === 'showAndCopy') overlays.toast('AI 援助', answer);
+    if (action === 'show' || action === 'showAndCopy') showAiAnswer(answer);
   }
   room.on('remoteEmote', (p) => overlays.spawnRemoteEmote(p));
   overlays.on('sharedEmote', (p: SharedEmote) => {

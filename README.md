@@ -1,174 +1,64 @@
-<h1 align="center"><img src="assets/textures/generic_ping.png" width="56" alt=""><br>PingForAI</h1>
+# PingForAI
 
-PingForAI adds screenshot-based AI assistance to [lolPing](https://github.com/darrenprx/lolPing), originally created by **Danrui Meng (darrenprx)**. This is an independently maintained derivative, not an upstream release. Original MIT copyright and license text are preserved in [LICENSE](LICENSE); see [NOTICE.md](NOTICE.md) for attribution and the separate status of Riot Games assets. Our added source code is also MIT licensed.
+把桌面信号变成 AI 提问入口：在看不懂的内容附近 ping 一个问号，即可截图并获取解释。
 
-Open **Settings → AI assistance** to configure an HTTPS vision chat endpoint, model, and API Key. Keys are encrypted using the operating system's credential encryption and stored separately from ordinary settings; saved keys are never returned to the settings renderer. You can replace or clear a key, and changes take effect immediately. Initial connection settings can also come from `.env`. Each signal has its own prompt and action. Triggering an enabled signal sends a screenshot of the nearby content to the configured AI provider.
+PingForAI 基于 [darrenprx/lolPing](https://github.com/darrenprx/lolPing) 开发，原作者为 Danrui Meng。我们保留原项目的桌面轮盘、信号、声音、表情和房间功能，增加按信号配置的 AI 截图援助。这是独立维护的衍生项目。
 
-This repository has no published installer yet; use the [development instructions](#build-from-source). For upstream contributions, see [CONTRIBUTING.md](CONTRIBUTING.md). Historical screenshots below show the upstream interface and may differ from PingForAI.
+## AI 援助
 
-<p align="center">
-  English | <a href="README.zh-CN.md">简体中文</a>
-</p>
+- 每个信号可分别设置提示词，选择关闭、显示回答、复制回答或显示并复制。
+- 默认问号信号启用显示回答，其余信号关闭；可在设置中调整。
+- 发送信号附近的高清局部截图，以及同一显示器的整体背景图。提示模型约 80% 关注附近内容、20% 参考整体，提供信号在局部图中的准确坐标；这些是提示词中的优先级，不是模型可保证的精确权重。
+- 回答支持 Markdown 标题、列表、代码块和表格。每次回答使用独立窗口，直到手动关闭；可选择文字及复制原始 Markdown。
+- API Key、模型和聊天接口地址可在「AI 援助」设置页配置。密钥由 Electron safeStorage 在本机加密保存，不传给页面；操作系统不支持加密时拒绝保存密钥。
 
-<p align="center">
-  League of Legends pings and emotes for your whole desktop, on Windows and macOS.<br>
-  Hold <b>Alt</b> (<b>⌥ Option</b> on a Mac), drag, and let go on a ping. The animation pops and the sound plays on top of any app, on any monitor.<br>
-  Hold <b>Ctrl</b> (<b>⌃ Control</b> on a Mac) and drag for the emote wheel: League's emotes, or your own images.
-</p>
+## 本地运行
 
-<p align="center"><a href="#build-from-source"><b>Run from source</b></a></p>
+需要 Node.js 22.16+（或支持 `--env-file-if-exists` 的更新版本）、npm，以及编译原生输入助手所需的 Swift/macOS 开发工具或 Windows C++ 工具链。
 
-<p align="center">
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/ju-sir/PingForAI" alt="MIT license"></a>
-</p>
-
-<p align="center"><img src="docs/media/demo.gif" width="880" alt="An app freezes with a not-responding dialog, and the ping wheel drops three Enemy Missing pings on it"></p>
-
-Pings and emotes show up in whole-screen capture, so friends watching your Discord or OBS stream see them too. PingForAI is a desktop toy: it doesn't read, change or hook into League itself.
-
-## Install
-
-The instructions below describe future packaged releases; installers are not published yet. Local development also supports Intel macOS with the compatible Electron runtime described below.
-
-### Windows
-
-1. Download `PingForAI-Setup-<version>.exe` from the [latest release](https://github.com/ju-sir/PingForAI/releases/latest).
-2. Run it. The installer isn't code-signed, so Windows SmartScreen may say "Windows protected your PC". Select **More info**, then **Run anyway**.
-3. PingForAI opens its settings and moves to the tray. Hold Alt and drag anywhere to ping.
-
-PingForAI is built for Windows 11, 64-bit. Windows 10 may work, but it isn't tested.
-
-### macOS (experimental)
-
-The packaged target is Apple Silicon; release automation is currently inactive. The default Electron 44 runtime does not support macOS 12. Local macOS 12 development has been verified with Electron 37.10.3 on Intel; set `ELECTRON_EXEC_PATH` in `.env` to the compatible executable. Please [report](https://github.com/ju-sir/PingForAI/issues) anything that doesn't work.
-
-1. Download `PingForAI-<version>-arm64.dmg` from the [latest release](https://github.com/ju-sir/PingForAI/releases/latest), open it, and drag PingForAI into Applications.
-2. Open PingForAI. It isn't signed by a registered Apple developer, so macOS says it can't check it for malware. Select **Done**, open **System Settings → Privacy & Security**, scroll down, select **Open Anyway** next to the PingForAI message, and confirm.
-   If macOS instead says PingForAI "is damaged", run `xattr -dr com.apple.quarantine /Applications/PingForAI.app` in Terminal and open it again.
-3. PingForAI asks for **Accessibility** access, which it needs to read the mouse and keyboard. Select **Open System Settings** and turn PingForAI on. Pinging starts as soon as it's allowed.
-4. PingForAI lives in the menu bar. Hold ⌥ Option and drag anywhere to ping.
-
-**After every update**, macOS forgets the Accessibility permission, because the app isn't signed with a fixed developer identity. In **Privacy & Security → Accessibility**, select PingForAI, remove it with **–**, then turn it on again. The settings window walks you through it.
-
-### Updating an older version
-
-Updating from v0.4 or earlier: download the new version by hand once. From v0.5 on, PingForAI updates itself (see [Updates](#updates)).
-
-## Use
-
-| To | Do this |
-| --- | --- |
-| Ping | Hold **Alt**, drag, and let go on a slice |
-| Emote | Hold **Ctrl**, drag, and let go on an emote |
-| Cancel | Let go in the centre, right-click, or press **Esc** |
-| Pause or resume pinging | **Ctrl + Alt + P** |
-| Open settings | Click the tray icon |
-| Quit, or restart the input helper | Right-click the tray icon |
-
-On a Mac, use **⌥ Option** instead of Alt, **⌃ Control** instead of Ctrl for emotes, **⌃⌥P** to pause, and the ping icon in the menu bar instead of the tray icon.
-
-The wheel, from the top going clockwise: Danger, Push, On My Way, All In, Assist Me, Need Vision, Enemy Missing, Enemy Vision. You can rearrange it and add Bait or Vision Cleared in settings. The emote wheel has 8 slots too, and you pick its emotes in settings.
-
-## Settings
-
-<img src="docs/media/settings.png" width="760" alt="The PingForAI settings window, with sections for trigger, toggle, pings and sound, wheel, emotes, room and app">
-
-- **Trigger key:** Alt, Ctrl, Shift, Win, Caps Lock, Mouse 4, Mouse 5 or any other key (on a Mac: Option, Control, Shift, Command, Mouse 4, Mouse 5 or any other key). The custom key won't type in other apps while pinging is on.
-- **Alt + click places a ping:** off by default, so ordinary Alt + click shortcuts keep working. The ping is the one in the centre of the wheel editor (Generic unless you change it).
-- **Pause in fullscreen apps:** on by default. A fullscreen game keeps every click — trigger + click does nothing there — and gestures resume on the desktop and on other monitors. Windowed games aren't detected, and with an auto-hiding taskbar only borderless fullscreen counts. Windows only for now.
-- **Enable / disable shortcut:** must include Ctrl, Alt or Win (⌃, ⌥ or ⌘ on a Mac).
-- **Pings and sound:** size, duration, volume, mute and the wheel's tick sound.
-- **Wheel:** drag any ping onto any slice, including Bait and Vision Cleared, or onto the centre to make it the Alt + click ping. Click a ping to preview it. **Reset to default** brings back League's layout.
-- **Emotes:** the emote key (Ctrl by default, or off), **Ctrl + click places an emote** (off by default), emote size, emote sound and the emote wheel, which you edit like the ping wheel. **Add image…**, or dropping a file on the list, adds your own images: PNG, JPG, GIF or WebP, up to 24. Animated ones play on your screen only.
-- **Launch at Windows startup** (**Open at login** on a Mac): starts hidden in the tray or menu bar.
-- **Language:** follows the system display language, or pick English or 简体中文.
-
-Settings are saved in `%APPDATA%\PingForAI\settings.json` on Windows and `~/Library/Application Support/PingForAI/settings.json` on a Mac.
-
-## Updates
-
-PingForAI checks GitHub for a new version 10 seconds after it starts, then every 6 hours. When there is one, you get a notice on screen, and the tray menu and **Settings → App → About** offer **Update**. It asks first: nothing downloads until you click.
-
-- **Windows:** one click downloads the installer, verifies it, installs it silently into the same folder and restarts PingForAI. The settings window opens after the restart.
-- **Mac:** PingForAI downloads the disk image to your Downloads folder, verifies it, explains what to do, opens it, and quits. Drag PingForAI into Applications, choose **Replace**, open it, and allow Accessibility again.
-- **Check for updates** in the tray menu, or in **Settings → App → About**, checks right away. From the tray, the result (up to date, or what went wrong) appears as a notice on screen.
-- **Check for updates automatically** (Settings → App, on by default) controls the scheduled checks. With it off, PingForAI contacts GitHub only when you click **Check for updates** or **Update**.
-- **Privacy:** a check tells GitHub your IP address and PingForAI's version, nothing else.
-
-## Ping with friends (rooms)
-
-Join a room and everyone in it sees your pings on their own screen, at the same spot (scaled to their resolution), with your name under them. Their pings show up on yours. It works between Windows and Mac.
-
-1. One person opens **Settings → Room** (or the tray menu → **Room**) and clicks **Create room**.
-2. They copy the code, such as `PING-7KQ4M-2HXTR`, and send it to friends.
-3. Each friend copies it and clicks **Join from clipboard** in the tray menu, or pastes it into the Room page and clicks **Join**.
-
-- **Same network:** the first time, Windows asks whether PingForAI may use the network: allow it, and set your Wi‑Fi to **Private** (Windows blocks it on Public networks). A Mac asks to find devices on the local network.
-- **Different networks:** with **Allow internet connections** on (the default), friends anywhere join with the same code. Their pings travel through free public [Nostr](https://nostr.com) relays and take a moment longer than on a local network, which is still used whenever it works. Virtual LANs such as ZeroTier or Radmin VPN work too, and Tailscale users simply connect over the internet.
-- A ping lands on the display with the same number (1 is the primary display), or on display 1.
-- **Emotes** travel like pings: friends see yours on their own screen with your name under it. Your own images show as a "?" to friends for now. Friends on v0.4 or older don't see emotes, and the Room page says so under their names.
-- **Mute room**, muting one person, and an **Incoming ping and emote limit** (up to Unlimited, counted for both together) keep the spam under control. Pausing PingForAI with the shortcut pauses room pings and emotes too.
-- A room holds up to 8 people. Leave and create a new room to get rid of someone.
-- **Privacy:** pings, emotes and names are end-to-end encrypted with a key made from the room code. People on your network can see your local IP address. With internet connections on, public relays see your IP address, an anonymous room ID and when you send, but never your pings, emotes or name. Turn **Allow internet connections** off to stay on your local network.
-
-## Known limitations
-
-- The wheel can't open over windows running as administrator, such as Task Manager. Windows hides their input from normal apps.
-- Exclusive-fullscreen games draw above the overlay.
-- Sharing a single window doesn't include the pings. Share your entire screen instead.
-- While PingForAI is on, Ctrl + drag opens the emote wheel instead of copying files or text. Pick another emote key, or turn it off, in Settings → Emotes.
-- On a Mac, the wheel can't open while a secure screen is showing, such as the login window or a password prompt, and Accessibility has to be allowed again after each update.
-
-## Build from source
-
-You need Node 22.12 or later, plus:
-
-- **Windows:** Windows 11 and Visual Studio 2022 or later with the "Desktop development with C++" workload.
-- **macOS:** an Intel or Apple Silicon Mac with the Xcode Command Line Tools (`xcode-select --install`) and a compatible Electron runtime. Allow Accessibility for the runtime so the helper can read input, and Screen Recording for screenshot assistance.
-
-```bash
-npm install
-npx install-electron
+```sh
+git clone https://github.com/ju-sir/PingForAI.git
+cd PingForAI
+npm ci
 npm run build:helper
 npm run dev
 ```
 
-`npx install-electron` downloads the Electron binary that `npm run dev` needs.
+macOS 需要授予辅助功能权限以监听输入；AI 截图还需要屏幕录制权限。权限由系统管理，授权后可能需要重启应用。当前默认 Electron 的系统要求以其发行说明为准；macOS 12 可通过 `.env` 的 `ELECTRON_EXEC_PATH` 指向兼容的 Electron 37 可执行文件。本地已在 macOS 12 Intel 环境使用该方式验证；默认 macOS 打包目标仍是 arm64。
 
-| Command | What it does |
+## 连接 AI
+
+推荐启动后在设置页填写：
+
+| 配置 | 示例 |
 | --- | --- |
-| `npm test` | TypeScript tests, including a protocol test that runs the real helper in `--simulate` mode |
-| `npm run test:helper` | Builds the helper and runs its C++ tests |
-| `npm run typecheck` | Type-checks everything |
-| `npm run dist` | Builds the Windows installer into `release/` |
-| `npm run dist:mac` | Builds the Mac disk image into `release/` (on a Mac) |
-| `npm run dev:site` | Serves a browser demo of the wheel (`site/`) |
-| `npm run media` | Re-records `docs/media/demo.gif` and `docs/media/og.png` from that demo (needs ffmpeg) |
-| `node tools/room-peer/run.mjs <code>` | Joins a room as a fake member that pings at random, to try rooms with one computer; `--relay` joins through the relays and `--emotes` also sends emotes (see [`tools/room-peer`](tools/room-peer)) |
-| `node tools/relay-probe/run.mjs` | Tests which public Nostr relays can carry rooms; it chose the list in `src/main/relays.ts` (see [`tools/relay-probe`](tools/relay-probe)) |
+| 聊天接口地址 | `https://api.deepseek.com/chat/completions` |
+| 模型 | `deepseek-flash` |
+| API Key | 你自己的服务商密钥 |
 
-### Releasing
+服务和模型必须接受 OpenAI 风格的 `chat/completions` 请求及 `image_url` 多图输入。图像生成接口 `/images/generations` 不能直接替代读图聊天接口。不同服务的视觉能力、可用模型和计费方式以服务商实际支持为准。
 
-Release automation is inactive. The tested template is in [tools/github-workflows](tools/github-workflows); enable it with credentials that can modify workflows before following the procedure below.
+也可将 [.env.example](.env.example) 复制为 `.env`，填写 `AI_API_KEY`、`AI_CHAT_ENDPOINT`、`AI_MODEL`。已在设置页保存的配置优先；在设置中明确清除密钥后不会退回环境变量继续发送。不要提交真实密钥。
 
-Bump `version` in `package.json`, commit, then push a matching tag such as `v0.2.0`. The Release workflow creates the GitHub release as a draft. The Windows job attaches the installer, `latest.yml` and the installer's `.blockmap`, and the Mac job attaches the disk image. electron-updater needs both `latest.yml` and the `.blockmap` to update installed copies. A last job publishes the release once everything is attached.
+## 数据与隐私
 
-## How it works
+启用了 AI 的信号会把当前显示器的局部截图和整体截图上传到你配置的 AI 服务，可能包含文档、聊天记录等敏感内容。只在愿意上传当前画面时启用；其他显示器不会作为 AI 图片发送。截图不另存到磁盘，AI 请求不经 PingForAI 自建服务器转发，API Key 不包含在房间消息中。当前请求冷却为 8 秒，超时为 60 秒。
 
-- **Input:** [`native/hook-helper`](native/hook-helper) is a small C++ process that owns the low-level mouse and keyboard hooks on Windows, or an event tap on macOS. It swallows the Alt + drag so the app underneath never sees it, and talks to Electron in JSON lines over stdin and stdout.
-- **Display:** Electron draws the wheel and pings in one transparent, click-through, always-on-top window per monitor ([`src/renderer/overlay`](src/renderer/overlay)), and plays the sounds through Web Audio.
-- **Rooms:** [`src/main/roomManager.ts`](src/main/roomManager.ts) keeps the room's members and encrypts every message (AES-256-GCM, key from scrypt over the room code). [`src/main/lanTransport.ts`](src/main/lanTransport.ts) carries the encrypted packets over UDP on the local network, and [`src/main/relayTransport.ts`](src/main/relayTransport.ts) through public Nostr relays as ephemeral events.
-- **Updates:** [`src/main/updater.ts`](src/main/updater.ts) runs the schedule and the state the tray and settings show. [`src/main/updateWin.ts`](src/main/updateWin.ts) updates through electron-updater and the `latest.yml` on the release, and [`src/main/updateMac.ts`](src/main/updateMac.ts) reads the GitHub releases API and checks the disk image against its SHA-256.
-- **Settings:** a Fluent UI window ([`src/renderer/settings`](src/renderer/settings)) with Mica on Windows, restyled like System Settings on macOS.
-- **Demo page:** [`site`](site) runs the same overlay code in the browser, with a small input shim in place of the helper. The README GIF is recorded from it.
-- **Design notes:** [docs/design.md](docs/design.md) covers the protocol, the input state machine and the multi-monitor maths. [docs/design-macos.md](docs/design-macos.md) covers the Mac port.
+模型输出视为不可信内容：Markdown 渲染会移除脚本、事件属性、图片和可执行链接。AI 可能误读画面，请自行核对答案。
 
-## Ping assets
+## 开发验证
 
-The icons in `assets/textures` and the sounds in `assets/sounds` come from a local League of Legends install. [`tools/extract-assets`](tools/extract-assets) explains how to extract them again after a patch. The emote animations, icons and sounds in `assets/emotes` are © Riot Games too, and `tools/extract-assets --emotes` bakes them from the same install.
+```sh
+npm run typecheck
+npm test -- --maxWorkers=2 --testTimeout=20000
+npm run build
+npm run test:helper  # 修改原生输入助手时
+```
 
-## License
+`npm start` 运行已构建的应用。`npm run build:site` 构建项目网站。仓库不包含可直接安装的已签名发行包；本地构建与发行配置见 `package.json`。
 
-The code is under the [MIT license](LICENSE). The ping and emote icons, animations and sounds are © Riot Games and aren't covered by it. If you represent Riot Games and want something removed, please open an issue.
+## 来源与许可证
 
-PingForAI isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.
+原始代码和本项目修改采用 MIT 许可证，完整保留原作者版权声明，见 [LICENSE](LICENSE) 与 [NOTICE.md](NOTICE.md)。英雄联盟信号贴图与声音属于 Riot Games，不在代码的 MIT 授权范围内。本项目未获 Riot Games 背书。
+
+房间协议中的 `lolping/room/v1` 标识为兼容性保留，旧 `lolPing` 配置目录仅用于迁移个人设置。贡献和上游提交流程见 [CONTRIBUTING.md](CONTRIBUTING.md)。

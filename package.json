@@ -5,10 +5,15 @@
   "private": true,
   "description": "League of Legends style ping wheel for your Windows and macOS desktop",
   "author": "ju-sir (https://github.com/ju-sir)",
-  "contributors": ["Danrui Meng (https://github.com/darrenprx)"],
+  "contributors": [
+    "Danrui Meng (https://github.com/darrenprx)"
+  ],
   "license": "MIT",
   "homepage": "https://github.com/ju-sir/PingForAI#readme",
-  "repository": { "type": "git", "url": "https://github.com/ju-sir/PingForAI.git" },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ju-sir/PingForAI.git"
+  },
   "bugs": "https://github.com/ju-sir/PingForAI/issues",
   "main": "out/main/index.js",
   "scripts": {
@@ -34,11 +39,14 @@
     "@types/react-dom": "19.3.0",
     "@types/ws": "8.18.2",
     "@vitejs/plugin-react": "5.2.0",
+    "dompurify": "3.4.17",
     "electron": "44.5.1",
     "electron-builder": "26.15.3",
     "electron-updater": "6.8.10",
     "electron-vite": "5.0.0",
     "esbuild": "0.25.12",
+    "jsdom": "29.1.1",
+    "marked": "18.1.1",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "typescript": "5.9.3",
@@ -49,12 +57,32 @@
   "build": {
     "appId": "com.pingforai.app",
     "productName": "PingForAI",
-    "directories": { "output": "release", "buildResources": "build" },
-    "files": ["out/**/*", "package.json", "LICENSE", "NOTICE.md"],
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "out/**/*",
+      "package.json",
+      "LICENSE",
+      "NOTICE.md"
+    ],
     "win": {
-      "target": [{ "target": "nsis", "arch": ["x64"] }],
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
       "icon": "build/icon.ico",
-      "extraResources": [{ "from": "native/hook-helper/build/hook-helper.exe", "to": "hook-helper.exe" }]
+      "extraResources": [
+        {
+          "from": "native/hook-helper/build/hook-helper.exe",
+          "to": "hook-helper.exe"
+        }
+      ]
     },
     "nsis": {
       "oneClick": false,
@@ -64,14 +92,30 @@
       "include": "build/installer.nsh"
     },
     "mac": {
-      "target": [{ "target": "dmg", "arch": ["arm64"] }],
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64"
+          ]
+        }
+      ],
       "icon": "build/icon.png",
       "category": "public.app-category.utilities",
       "identity": "-",
       "hardenedRuntime": false,
       "extraResources": [
-        { "from": "native/hook-helper/build/hook-helper", "to": "hook-helper" },
-        { "from": "build", "to": ".", "filter": ["tray*Template*.png"] }
+        {
+          "from": "native/hook-helper/build/hook-helper",
+          "to": "hook-helper"
+        },
+        {
+          "from": "build",
+          "to": ".",
+          "filter": [
+            "tray*Template*.png"
+          ]
+        }
       ],
       "extendInfo": {
         "NSAccessibilityUsageDescription": "PingForAI reads the mouse and keyboard to open the ping wheel or the emote wheel when you hold its key and drag.",
@@ -79,7 +123,15 @@
         "NSLocalNetworkUsageDescription": "PingForAI finds the other people in your room on the local network and sends them your pings."
       }
     },
-    "dmg": { "artifactName": "PingForAI-${version}-arm64.dmg" },
-    "publish": [{ "provider": "github", "owner": "ju-sir", "repo": "PingForAI" }]
+    "dmg": {
+      "artifactName": "PingForAI-${version}-arm64.dmg"
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "ju-sir",
+        "repo": "PingForAI"
+      }
+    ]
   }
 }
