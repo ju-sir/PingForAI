@@ -1,4 +1,5 @@
-import { Button, Dropdown, Field, Input, Option, Textarea } from '@fluentui/react-components';
+import { Button, Dropdown, Field, Input, Option, Switch, Textarea } from '@fluentui/react-components';
+import { AI_TASKS, CAPTURE_SIZES, taskPrompt, type AiCaptureOptions } from '../../../shared/aiFeatures';
 import { Sparkle24Regular } from '@fluentui/react-icons';
 import { useEffect, useState } from 'react';
 import type { AiConnectionConfig } from '../../../shared/aiConfig';
@@ -12,6 +13,7 @@ const ACTIONS: AiSignalAction[] = ['off', 'show', 'copy', 'showAndCopy'];
 
 export function AiAssistSection({ settings, update }: { settings: Settings; update: Update }) {
   const t = useText();
+  const zh = t.lang === 'zh-CN';
   const [drafts, setDrafts] = useState<Record<string, string>>({});
   const [config, setConfig] = useState<AiConnectionConfig | null>(null);
   const [endpoint, setEndpoint] = useState('');
@@ -57,6 +59,17 @@ export function AiAssistSection({ settings, update }: { settings: Settings; upda
         {message ? <div className={`aiFeedback${failed ? ' warnText' : ''}`} role={failed ? 'alert' : 'status'}>{message}</div> : null}
       </div>
       <div className="card aiEditor">
+        <div className="aiHead"><div className="lbl"><b>{zh ? '截图范围与隐私' : 'Capture scope & privacy'}</b><span className="desc">{zh ? '截图在本机裁剪后上传，尺寸为截图像素。整体背景默认关闭。' : 'Screenshots are cropped locally before uploading. Sizes are in image pixels. Overview is off by default.'}</span></div></div>
+        <Field label={zh ? '信号附近的区域大小' : 'Area around the ping'}>
+          <Dropdown value={`${settings.aiCapture.size} · ${CAPTURE_SIZES[settings.aiCapture.size].width} × ${CAPTURE_SIZES[settings.aiCapture.size].height}`} selectedOptions={[settings.aiCapture.size]}
+            onOptionSelect={(_, data) => { if (data.optionValue) void update({ aiCapture: { ...settings.aiCapture, size: data.optionValue as AiCaptureOptions['size'] } }); }}>
+            {Object.entries(CAPTURE_SIZES).map(([key, size]) => <Option key={key} value={key}>{`${key} · ${size.width} × ${size.height}`}</Option>)}
+          </Dropdown>
+        </Field>
+        <Switch checked={settings.aiCapture.includeOverview} label={zh ? '额外上传当前显示器整体背景（局部优先 80%，背景辅助 20%）' : 'Also upload the current display overview (80% local focus, 20% context)'} onChange={(_, data) => void update({ aiCapture: { ...settings.aiCapture, includeOverview: data.checked } })} />
+        <span className="desc">{zh ? '整体背景可能包含其他窗口或敏感内容。仅在确实需要上下文时开启。' : 'An overview can include other windows and sensitive content. Enable it only when context is needed.'}</span>
+      </div>
+      <div className="card aiEditor">
         <div className="aiHead"><div className="lbl"><b>{t.aiSignalsTitle}</b><span className="desc">{t.aiDesc}</span></div></div>
         {ALL_PINGS.map((p) => {
           const config = settings.aiSignals[p.id];
@@ -69,6 +82,9 @@ export function AiAssistSection({ settings, update }: { settings: Settings; upda
                   onOptionSelect={(_, data) => change(p.id, { action: data.optionValue as AiSignalAction })}>
                   {ACTIONS.map((action) => <Option key={action} value={action} text={actionLabel(action)}>{actionLabel(action)}</Option>)}
                 </Dropdown>
+              </div>
+              <div className="aiTaskPresets" aria-label={zh ? '任务模板' : 'Task presets'}>
+                {AI_TASKS.map((task) => <Button size="small" key={task.id} onClick={() => { const prompt = taskPrompt(task.id, t.lang); setDrafts((all) => ({ ...all, [p.id]: prompt })); change(p.id, { prompt }); }}>{zh ? task.zh : task.en}</Button>)}
               </div>
               <Field label={t.aiPrompt}>
                 <Textarea value={prompt} placeholder={t.aiPromptPlaceholder} resize="vertical" rows={3} maxLength={4000}

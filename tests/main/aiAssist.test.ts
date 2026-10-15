@@ -46,8 +46,8 @@ describe('ai assistance', () => {
     expect(request.messages[0].content[1].type).toBe('image_url');
     expect(request.messages[0].content[1].image_url.url).toBe('data:image/png;base64,abc');
     expect(request.messages[0].content[0].text).toContain('请解释这个界面');
-    expect(request.messages[0].content[0].text).toContain('80%');
-    expect(request.messages[0].content[0].text).toContain('20%');
+    expect(request.messages[0].content[0].text).toContain('局部截图');
+    expect(request.messages[0].content[0].text).not.toContain('第二张');
   });
 
   it('sends local detail first and a separately labelled full-screen context second', () => {
@@ -55,6 +55,8 @@ describe('ai assistance', () => {
     const content = request.messages[0].content;
     expect(content.filter((part) => part.type === 'image_url').map((part) => part.image_url.url)).toEqual(['local', 'screen']);
     expect(content[0].text).toContain('(20, 30)');
+    expect(content[0].text).toContain('80%');
+    expect(content[0].text).toContain('20%');
     expect(JSON.stringify(content)).toContain('整体');
   });
 });

@@ -12,6 +12,7 @@ import { parseRoomCode } from './roomCode';
 import { sanitizeName } from './roomProtocol';
 import { isVersion } from './update';
 import { isValidWheel } from './wheelLayout';
+import { normalizeAiCapture, type AiCaptureOptions } from './aiFeatures';
 
 export type NamedTrigger = 'alt' | 'ctrl' | 'shift' | 'win' | 'capslock' | 'mouse4' | 'mouse5';
 export type TriggerKey = NamedTrigger | { vk: number };
@@ -71,6 +72,7 @@ export interface Settings {
   updateNotifiedVersion: string | null;
   /** Per-ping AI action and prompt. API credentials are never stored here. */
   aiSignals: Record<PingId, AiSignalConfig>;
+  aiCapture: AiCaptureOptions;
 }
 
 export type AiSignalAction = 'off' | 'show' | 'copy' | 'showAndCopy';
@@ -121,6 +123,7 @@ export const DEFAULT_SETTINGS: Settings = {
   autoUpdateCheck: true,
   updateNotifiedVersion: null,
   aiSignals: defaultAiSignals(),
+  aiCapture: normalizeAiCapture(null),
 };
 
 export const LIMITS = {
@@ -274,6 +277,7 @@ export function normalizeSettings(raw: unknown, platform: Platform = 'win', iden
     autoUpdateCheck: bool(r.autoUpdateCheck, 'autoUpdateCheck'),
     updateNotifiedVersion: isVersion(r.updateNotifiedVersion) ? r.updateNotifiedVersion : null,
     aiSignals: aiSignals(r.aiSignals),
+    aiCapture: normalizeAiCapture(r.aiCapture),
   };
 }
 

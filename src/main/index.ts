@@ -18,7 +18,7 @@ import { LanTransport } from './lanTransport';
 import { RELAYS } from './relays';
 import { RelayTransport } from './relayTransport';
 import { OverlayManager, type AiAssistPing, type SharedEmote, type SharedPing } from './overlayManager';
-import { AiAssist, focusCropRect } from './aiAssist';
+import { AiAssist, prepareAiCapture } from './aiAssist';
 import { showAiAnswer } from './aiAnswerWindow';
 import { AiConfigStore } from './aiConfigStore';
 import { assetPath, buildResourcePath, helperExePath, IS_MAC, PLATFORM, settingsDir, migrateLegacySettings } from './paths';
@@ -268,31 +268,40 @@ function start(): void {
     const shared = toShared(overlays.numbered(), p.displayId, p.x, p.y);
     if (shared) room.sendPing(p.id, shared);
   });
+  let capturingAi = false;
   overlays.on('aiAssist', (p: AiAssistPing) => {
     const config = settings.aiSignals[p.id];
-    if (!config || config.action === 'off' || !aiAssist.configured || quitting) return;
-    void explainPing(p, config.prompt, config.action).catch((err: unknown) => console.warn('[ai-assist]', err));
+    if (!config || config.action === 'off' || quitting) return;
+    const zh = text().lang === 'zh-CN';
+    const notify = (cn: string, en: string) => overlays.toast('PingForAI', zh ? cn : en);
+    if (!aiAssist.configured) { notify('请先在设置 → AI 援助中配置 API Key。', 'Configure your API key in Settings → AI assistance.'); return; }
+    if (capturingAi || aiAssist.busy) { notify('正在解答上一个信号，请稍候。', 'Still answering your previous ping.'); return; }
+    if (aiAssist.coolingDown) { notify('请稍等几秒后再次触发。', 'Please wait a few seconds before trying again.'); return; }
+    capturingAi = true;
+    notify('正在截取信号附近并请求 AI…', 'Capturing the area near your ping and asking AI…');
+    void explainPing(p, config.prompt, config.action).catch(() => {
+      if (!quitting) notify('AI 援助失败。请检查录屏权限、网络、模型读图能力和 API 配置后重试。', 'AI assistance failed. Check screen recording permission, network, vision model and API settings.');
+    }).finally(() => { capturingAi = false; });
   });
   async function explainPing(p: AiAssistPing, prompt: string, action: 'show' | 'copy' | 'showAndCopy'): Promise<void> {
     const display = screen.getAllDisplays().find((d) => d.id === p.displayId);
-    if (!display) return;
+    if (!display) throw new Error('Display unavailable');
     const scale = display.scaleFactor || 1;
     const width = Math.max(1, Math.round(display.bounds.width * scale));
     const height = Math.max(1, Math.round(display.bounds.height * scale));
     const sources = await desktopCapturer.getSources({ types: ['screen'], thumbnailSize: { width, height } });
     const source = sources.find((s) => s.display_id === String(display.id));
-    if (!source || source.thumbnail.isEmpty()) return;
+    if (!source || source.thumbnail.isEmpty()) throw new Error('Screen capture unavailable');
     const image = source.thumbnail;
     const size = image.getSize();
     const marker = { x: p.x * size.width / display.bounds.width, y: p.y * size.height / display.bounds.height };
-    const crop = focusCropRect(size, marker, 640, 480);
-    const background = size.width > 1280 ? image.resize({ width: 1280 }) : image;
-    const answer = await aiAssist.explain(image.crop(crop), prompt, {
-      imageUrl: background.toDataURL(), marker: { x: marker.x - crop.x, y: marker.y - crop.y },
-    });
-    if (!answer || quitting) return;
+    const prepared = prepareAiCapture(image, marker, settings.aiCapture);
+    const answer = await aiAssist.explain(prepared.image, prompt, prepared.context);
+    if (quitting) return;
+    if (!answer) throw new Error('Empty AI response');
     if (action === 'copy' || action === 'showAndCopy') await Promise.resolve().then(() => clipboard.writeText(answer)).catch(() => undefined);
     if (action === 'show' || action === 'showAndCopy') showAiAnswer(answer);
+    else overlays.toast('PingForAI', text().lang === 'zh-CN' ? '回答已复制到剪贴板。' : 'Answer copied to clipboard.');
   }
   room.on('remoteEmote', (p) => overlays.spawnRemoteEmote(p));
   overlays.on('sharedEmote', (p: SharedEmote) => {
