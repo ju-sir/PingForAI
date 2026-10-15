@@ -3,7 +3,7 @@
   "productName": "PingForAI",
   "version": "0.5.1",
   "private": true,
-  "description": "League of Legends style ping wheel for your Windows and macOS desktop",
+  "description": "Point at desktop content to ask your vision AI, with custom signal tasks and local screenshot controls",
   "author": "ju-sir (https://github.com/ju-sir)",
   "contributors": [
     "Danrui Meng (https://github.com/darrenprx)"
@@ -22,6 +22,7 @@
     "start": "node --env-file-if-exists=.env node_modules/electron-vite/bin/electron-vite.js preview",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "test:ai": "vitest run --config vitest.ai.config.ts --coverage --maxWorkers=2",
     "build:helper": "node native/hook-helper/run.mjs build",
     "test:helper": "node native/hook-helper/run.mjs test",
     "dist": "npm run build:helper && electron-vite build && electron-builder --win --publish never",
@@ -39,6 +40,7 @@
     "@types/react-dom": "19.3.0",
     "@types/ws": "8.18.2",
     "@vitejs/plugin-react": "5.2.0",
+    "@vitest/coverage-v8": "5.0.3",
     "dompurify": "3.4.17",
     "electron": "44.5.1",
     "electron-builder": "26.15.3",

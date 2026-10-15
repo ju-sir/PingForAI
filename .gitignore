@@ -3,6 +3,7 @@ out/
 dist/
 release/
 site-dist/
+coverage/
 native/hook-helper/build/
 *.log
 .env

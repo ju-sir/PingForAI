@@ -3,8 +3,8 @@ import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 import { pruneAssets } from '../tools/pruneAssets';
 
-// A browser demo page. It runs the app's real overlay renderer (wheel, pings, sounds) with an input shim in place of
-// the native helper. tools/capture-media records the README GIF from it; it isn't deployed anywhere for now. Paths are relative to the repo root, where the npm scripts run.
+// Standalone showcase with preset interactions and no model requests.
+// Paths are relative to the repo root, where the npm scripts run.
 export default defineConfig({
   root: resolve('site'),
   base: './',
